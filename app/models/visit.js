@@ -68,6 +68,7 @@ export default AbstractModel.extend({
   procedures: DS.hasMany('procedure', { async: true }),
   vitals: DS.hasMany('vital', { async: true }),
   reports: DS.hasMany('report', { async: true }),
+  invoice: DS.belongsTo('invoice', { async: true }),
 
   diagnosisList: computed('diagnoses.[]', function() {
     let diagnoses = get(this, 'diagnoses');

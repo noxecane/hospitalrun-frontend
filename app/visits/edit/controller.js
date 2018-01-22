@@ -15,12 +15,15 @@ const {
   computed,
   get,
   isEmpty,
-  set
+  set,
+  inject
 } = Ember;
 
 export default AbstractEditController.extend(AddNewPatient, AllergyActions, ChargeActions, DiagnosisActions, PatientSubmodule, PatientNotes, UserSession, VisitTypes, {
-  visitsController: Ember.inject.controller('visits'),
-  filesystem: Ember.inject.service(),
+  visitsController: inject.controller('visits'),
+  filesystem: inject.service(),
+  invoicing: inject.service(),
+
   additionalButtons: computed('model.status', function() {
     let buttonProps = {
       buttonIcon: 'glyphicon glyphicon-log-out',
@@ -269,8 +272,23 @@ export default AbstractEditController.extend(AddNewPatient, AllergyActions, Char
     return !isEmpty(this.get('model.additionalDiagnoses'));
   }.property('model.additionalDiagnoses.[]'),
 
+  createInvoice() {
+    let invoicing = this.get('invoicing');
+    let visit = this.get('model');
+    let patient = this.get('model.patient');
+    let invoiceId = this.get('model.invoice.id');
+    if (Ember.isEmpty(invoiceId)) {
+      return invoicing.createInvoice(patient, visit).then(function(invoice) {
+        visit.set('invoice', invoice);
+        return visit.save();
+      });
+    }
+  },
+
   afterUpdate(visit) {
-    this.updatePatientVisitFlags(visit).then(this._finishAfterUpdate.bind(this));
+    return this.updatePatientVisitFlags(visit)
+      .then(this._finishAfterUpdate.bind(this))
+      .then(this.createInvoice.bind(this));
   },
 
   beforeUpdate() {
