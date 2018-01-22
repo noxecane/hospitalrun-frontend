@@ -30,6 +30,8 @@ export default AbstractEditController.extend(ChargeActions, PatientSubmodule, {
           this.set('model.imagingDate', new Date());
           this.send('update');
         }
+      }.bind(this)).then(function() {
+        return this.transitionToRoute('invoices.edit', this.get('model.visit.invoice.id'))
       }.bind(this)).catch(Ember.K);
     },
 
