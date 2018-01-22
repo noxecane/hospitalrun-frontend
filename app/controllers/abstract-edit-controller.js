@@ -23,7 +23,10 @@ export default Ember.Controller.extend(EditPanelProps, IsUpdateDisabled, ModalHe
   disabledAction: function() {
     let model = get(this, 'model');
     if (model.validate) {
-      model.validate().catch(Ember.K);
+      // TODO: this is a temporary fix to Ember.K causing error when there is none
+      model.validate().catch(function() {
+        // No-Op
+      });
     }
     let isValid = model.get('isValid');
     if (!isValid) {
