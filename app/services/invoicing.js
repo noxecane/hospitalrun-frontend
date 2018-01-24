@@ -2,41 +2,57 @@ import Ember from 'ember';
 
 const {
   Service,
+  RSVP,
   inject
 } = Ember;
 
 export default Service.extend({
   store: inject.service(),
 
-  _generateId() {
-    let store = this.get('store');
-    return store.find('sequence', 'invoice').then(function(sequence) {
-      let invoiceId = 'inv';
-      let sequenceValue;
-      sequence.incrementProperty('value', 1);
-      sequenceValue = sequence.get('value');
-      if (sequenceValue < 100000) {
-        invoiceId += String(`00000${sequenceValue}`).slice(-5);
-      } else {
-        invoiceId += sequenceValue;
-      }
-      return sequence.save().then(function() {
-        return invoiceId;
-      });
+  _createNewSequence(store) {
+    let newSequence = store.push(store.normalize('sequence', {
+      id: 'invoice',
+      value: 0
+    }));
+    return RSVP.resolve(newSequence);
+  },
+
+  _findSequence(store) {
+    return store.find('sequence', 'invoice');
+  },
+
+  _generateInvoiceId(sequence) {
+    sequence.incrementProperty('value', 1);
+    let currentCount = sequence.get('value');
+    return sequence.save().then(function() {
+      return 'inv' + (currentCount < 100000 ? `00000${currentCount}`.slice(-5) : currentCount);
     });
   },
 
+  _newInvoice(store, invoiceId, patient, visit) {
+    let invoice = store.createRecord('invoice', {
+      patient: patient,
+      visit: visit,
+      id: invoiceId,
+      billDate: new Date(),
+      status: 'Draft'
+    });
+    return invoice.save();
+  },
+
   createInvoice(patient, visit) {
-    return this._generateId().then(function(id) {
-      let store = this.get('store');
-      return store.createRecord('invoice', {
-        patient,
-        visit,
-        id,
-        billDate: new Date(),
-        status: 'Draft'
-      }).save();
-    }.bind(this));
+    let store = this.get('store');
+    let newInvoice = function(invoiceId) {
+      return this._newInvoice(store, invoiceId, patient, visit);
+    };
+    let newSequence = function() {
+      return this._createNewSequence(store);
+    };
+
+    return this._findSequence(store)
+      .catch(newSequence.bind(this))
+      .then(this._generateInvoiceId)
+      .then(newInvoice.bind(this));
   },
 
   deleteInvoice(invoice) {
