@@ -1,4 +1,5 @@
 import AbstractEditRoute from 'hospitalrun/routes/abstract-edit-route';
+import { IMAGING_PRICING_TYPE } from 'hospitalrun/pricing/edit/controller';
 import Ember from 'ember';
 export default AbstractEditRoute.extend({
   editTitle: 'Edit Pricing Item',
@@ -17,7 +18,8 @@ export default AbstractEditRoute.extend({
       newCategory = 'Imaging';
     }
     return Ember.RSVP.resolve({
-      category: newCategory
+      category: newCategory,
+      pricingType: IMAGING_PRICING_TYPE
     });
   },
 

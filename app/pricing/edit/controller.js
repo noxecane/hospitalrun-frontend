@@ -8,7 +8,7 @@ const {
   isEmpty
 } = Ember;
 
-const IMAGING_PRICING_TYPE = 'Imaging Procedure';
+export const IMAGING_PRICING_TYPE = 'Imaging Procedure';
 const LAB_PRICING_TYPE = 'Lab Procedure';
 
 export default AbstractEditController.extend(ReturnTo, {
