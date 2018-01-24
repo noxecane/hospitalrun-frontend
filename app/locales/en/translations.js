@@ -1407,6 +1407,7 @@ export default {
   },
   visits: {
     buttons: {
+      checkInvoice: 'View Invoice',
       addDiagnosis: 'Add Diagnosis',
       checkIn: 'Check In',
       checkOut: 'Check Out',

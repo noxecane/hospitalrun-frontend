@@ -95,6 +95,11 @@
                   label=(t "visits.labels.finalDiagnosis")  list=diagnosisList
                   selection=model.primaryBillingDiagnosis hint=false
                 }}
+                <div class="col-sm-2 col-sm-offset-5">
+                  {{#link-to 'invoices.edit' model.invoice.id class="btn btn-primary aligned" bubbles=false }}
+                    View Invoice
+                  {{/link-to}}
+                </div>
               </div>
             {{/if}}
             {{custom-form-manager model=model formType="visit"}}
