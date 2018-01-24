@@ -30,8 +30,6 @@ export default AbstractEditController.extend(ChargeActions, PatientSubmodule, {
           this.set('model.imagingDate', new Date());
           this.send('update');
         }
-      }.bind(this)).then(function() {
-        return this.transitionToRoute('invoices.edit', this.get('model.visit.invoice.id'))
       }.bind(this)).catch(Ember.K);
     },
 
@@ -113,11 +111,15 @@ export default AbstractEditController.extend(ChargeActions, PatientSubmodule, {
       alertTitle = i18n.t('imaging.alerts.savedTitle');
       alertMessage = i18n.t('imaging.alerts.savedMessage');
     }
-    if (multipleRecords) {
-      afterDialogAction = this.get('cancelAction');
-    }
+    // TODO: handle this better
+    // if (multipleRecords) {
+    //   afterDialogAction = this.get('cancelAction');
+    // }
     this.saveVisitIfNeeded(alertTitle, alertMessage, afterDialogAction);
     this.set('model.selectPatient', false);
+    if (this.get('model.status') == 'Completed') {
+      this.transitionToRoute('invoices.edit', this.get('model.visit.invoice.id'));
+    }
   }
 
 });

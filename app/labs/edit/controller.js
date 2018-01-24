@@ -98,11 +98,16 @@ export default AbstractEditController.extend(ChargeActions, PatientSubmodule, {
       alertTitle = i18n.t('labs.alerts.requestSavedTitle');
       alertMessage = i18n.t('labs.alerts.requestSavedMessage');
     }
-    if (multipleRecords) {
-      afterDialogAction = this.get('cancelAction');
-    }
+    // TODO: Handle this better
+    // if (multipleRecords) {
+    //   afterDialogAction = this.get('cancelAction');
+    // }
     this.saveVisitIfNeeded(alertTitle, alertMessage, afterDialogAction);
     this.set('model.selectPatient', false);
+
+    if (this.get('model.status') == 'Completed') {
+      this.transitionToRoute('invoices.edit', this.get('model.visit.invoice.id'));
+    }
   }
 
 });
