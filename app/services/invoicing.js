@@ -265,10 +265,14 @@ export default Service.extend({
   },
 
   deleteInvoice(invoice) {
-    invoice.set('archived', true);
-    return invoice.save().then(function() {
-      invoice.unloadRecord();
-    });
+    if (!Ember.isEmpty(invoice)) {
+      invoice.set('archived', true);
+      return invoice.save().then(function() {
+        invoice.unloadRecord();
+      });
+    }
+    console.warn('no invoice');
+    return RSVP.resolve();
   }
 
 });
