@@ -4,6 +4,7 @@ export default AbstractEditRoute.extend({
   editTitle: 'Edit Invoice',
   modelName: 'invoice',
   newTitle: 'New Invoice',
+  invoicing: Ember.inject.service(),
 
   actions: {
     deleteCharge(model) {
@@ -20,21 +21,17 @@ export default AbstractEditRoute.extend({
   },
 
   afterModel(model) {
+    let invoicing = this.get('invoicing');
     return new Ember.RSVP.Promise(function(resolve, reject) {
       let lineItems = model.get('lineItems');
-      let promises = [];
-      lineItems.forEach(function(lineItem) {
-        promises.push(lineItem.reload());
-      });
-      Ember.RSVP.all(promises, 'Reload billing line items for invoice').then(function(results) {
-        let detailPromises = [];
-        results.forEach(function(result) {
-          result.get('details').forEach(function(detail) {
-            detailPromises.push(detail.reload());
-          });
-        });
-        Ember.RSVP.all(detailPromises, 'Reload billing line item details for invoice').then(resolve, reject);
-      }, reject);
+      let visit = model.get('visit');
+      if (!Ember.isEmpty(lineItems) && !Ember.isEmpty(visit)) {
+        return invoicing.reloadItems(lineItems, reject)
+          .then(() => invoicing.regenerateItems(model, visit))
+          .catch((err) => console.warn(err))
+          .then(resolve, reject);
+      }
+      return invoicing.reloadItems(lineItems, reject).then(resolve, reject);
     });
   },
 
