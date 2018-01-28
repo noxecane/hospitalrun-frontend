@@ -205,14 +205,17 @@ export default AbstractEditController.extend(NumberFormat, PatientSubmodule, Pub
     let lineItems = this.get('model.lineItems');
     if (!Ember.isEmpty(visit) && Ember.isEmpty(lineItems)) {
       this.set('model.originalPaymentProfileId');
-      Ember.RSVP.all(this.resolveVisitChildren()).then(function(results) {
-        invoicing.invoiceInvariant(results).then(function() {
+      Ember.RSVP.all(this.resolveVisitChildren()).then((results) => {
+        invoicing.invoiceInvariant(results).then(() => {
           this._generateLineItems(visit, results);
           this.paymentProfileChanged();
-        }.bind(this));
-      }.bind(this), function(err) {
-        console.error('Error resolving visit children', err);
-      });
+        });
+      }, (err) => console.error('Error resolving visit children', err));
+    }
+
+    // force update of amountOwed if line items exist
+    if (!Ember.isEmpty(lineItems)) {
+      lineItems.forEach((lineItem) => lineItem.get('amountOwedChanged'));
     }
   }.observes('model.visit'),
 
