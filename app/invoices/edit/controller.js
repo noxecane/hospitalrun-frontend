@@ -9,6 +9,7 @@ import uuid from 'npm:uuid';
 
 export default AbstractEditController.extend(NumberFormat, PatientSubmodule, PublishStatuses, {
   invoiceController: Ember.inject.controller('invoices'),
+  invoicing: Ember.inject.service(),
   expenseAccountList: Ember.computed.alias('invoiceController.expenseAccountList.value'),
   patientList: Ember.computed.alias('invoiceController.patientList'),
   pharmacyCharges: [],
@@ -199,37 +200,18 @@ export default AbstractEditController.extend(NumberFormat, PatientSubmodule, Pub
   }.observes('model.paymentProfile'),
 
   visitChanged: function() {
+    let invoicing = this.get('invoicing');
     let visit = this.get('model.visit');
     let lineItems = this.get('model.lineItems');
     if (!Ember.isEmpty(visit) && Ember.isEmpty(lineItems)) {
       this.set('model.originalPaymentProfileId');
-      let promises = this.resolveVisitChildren();
-      Ember.RSVP.allSettled(promises, 'Resolved visit children before generating invoice').then(function(results) {
-        let chargePromises = this._resolveVisitDescendents(results, 'charges');
-        if (!Ember.isEmpty(chargePromises)) {
-          let promiseLabel = 'Reloaded charges before generating invoice';
-          Ember.RSVP.allSettled(chargePromises, promiseLabel).then(function(chargeResults) {
-            let pricingPromises = [];
-            chargeResults.forEach(function(result) {
-              if (!Ember.isEmpty(result.value)) {
-                let pricingItem = result.value.get('pricingItem');
-                if (!Ember.isEmpty(pricingItem)) {
-                  pricingPromises.push(pricingItem.reload());
-                }
-              }
-            });
-            promiseLabel = 'Reloaded pricing items before generating invoice';
-            Ember.RSVP.allSettled(pricingPromises, promiseLabel).then(function() {
-              this._generateLineItems(visit, results);
-              this.paymentProfileChanged();
-            }.bind(this));
-          }.bind(this));
-        } else {
+      Ember.RSVP.all(this.resolveVisitChildren()).then(function(results) {
+        invoicing.invoiceInvariant(results).then(function() {
           this._generateLineItems(visit, results);
           this.paymentProfileChanged();
-        }
+        }.bind(this));
       }.bind(this), function(err) {
-        console.log('Error resolving visit children', err);
+        console.error('Error resolving visit children', err);
       });
     }
   }.observes('model.visit'),
@@ -304,12 +286,9 @@ export default AbstractEditController.extend(NumberFormat, PatientSubmodule, Pub
 
   _generateLineItems(visit, visitChildren) {
     let endDate = visit.get('endDate');
-    let imaging = visitChildren[0].value;
-    let labs = visitChildren[1].value;
+    let [imaging, labs, medication, procedures] = visitChildren;
     let lineDetail, lineItem;
     let lineItems = this.get('model.lineItems');
-    let medication = visitChildren[2].value;
-    let procedures = visitChildren[3].value;
     let startDate = visit.get('startDate');
     let visitCharges = visit.get('charges');
     this.setProperties({

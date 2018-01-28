@@ -286,9 +286,14 @@ export default AbstractEditController.extend(AddNewPatient, AllergyActions, Char
   },
 
   afterUpdate(visit) {
+    function transitionToRealVisit() {
+      return this.transitionToRoute('visits.edit', this.get('model.id'));
+    }
+
     return this.updatePatientVisitFlags(visit)
       .then(this._finishAfterUpdate.bind(this))
-      .then(this.createInvoice.bind(this));
+      .then(this.createInvoice.bind(this))
+      .then(transitionToRealVisit.bind(this));
   },
 
   beforeUpdate() {
