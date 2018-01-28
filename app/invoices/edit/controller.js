@@ -125,7 +125,7 @@ export default AbstractEditController.extend(NumberFormat, PatientSubmodule, Pub
     },
 
     showDeleteItem(itemToDelete, deleteFrom) {
-      this.showDeleteModal(itemToDelete, Ember.Object.create({
+      this.send('showDeleteModal', itemToDelete, Ember.Object.create({
         confirmAction: 'deleteCharge',
         deleteFrom,
         title: 'Delete Charge'
@@ -133,7 +133,7 @@ export default AbstractEditController.extend(NumberFormat, PatientSubmodule, Pub
     },
 
     showDeleteLineItem(item) {
-      this.showDeleteModal(item, Ember.Object.create({
+      this.send('showDeleteModal', item, Ember.Object.create({
         confirmAction: 'deleteLineItem',
         title: 'Delete Line Item'
       }));
