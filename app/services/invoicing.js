@@ -74,15 +74,13 @@ export default Service.extend({
     return [];
   },
 
-  _itemKey(name) {
-    switch (name) {
-      case 'Pharmacy': return 'pharmacy';
-      case 'X-ray/Lab/Supplies': return 'supplies';
-      case 'Ward Items': return 'items';
-      case 'Room/Accomodation': return 'room';
-      case 'Physical Therapy': return 'therapy';
-      case 'Others/Misc': return 'others';
-    }
+  _itemTypes: {
+    'Pharmacy': 'pharmacy',
+    'X-ray/Lab/Supplies': 'supplies',
+    'Ward Items': 'items',
+    'Room/Accomodation': 'room',
+    'Physical Therapy': 'therapy',
+    'Others/Misc': 'others'
   },
 
   _cleanItem(lineItem) {
@@ -118,6 +116,18 @@ export default Service.extend({
         }
       }
     }
+  },
+
+  _createDefaultLineItems(store, lineItems) {
+    let objects = Object.keys(this._itemTypes)
+      .map((lineItemName) => {
+        return store.createRecord('billing-line-item', {
+          id: uuid.v4(),
+          name: lineItemName,
+          category: 'Hospital Charges'
+        });
+      });
+    lineItems.addObjects(objects);
   },
 
   _pharmacyCharge(store, charge, name) {
@@ -190,7 +200,7 @@ export default Service.extend({
   itemMap(lineItems) {
     let map = {};
     lineItems.forEach((lineItem) => {
-      let lineItemKey = this._itemKey(lineItem.get('name'));
+      let lineItemKey = this._itemTypes[lineItem.get('name')];
       map[lineItemKey] = lineItem;
     });
     return map;
@@ -251,17 +261,16 @@ export default Service.extend({
 
   createInvoice(patient, visit) {
     let store = this.get('store');
-    let newInvoice = function(invoiceId) {
-      return this._newInvoice(store, invoiceId, patient, visit);
-    };
-    let newSequence = function() {
-      return this._createNewSequence(store);
+    let defaultItems = (invoice) => {
+      this._createDefaultLineItems(store, invoice.get('lineItems'));
+      return invoice;
     };
 
     return this._findSequence(store)
-      .catch(newSequence.bind(this))
+      .catch(() => this._createNewSequence(store))
       .then(this._generateInvoiceId)
-      .then(newInvoice.bind(this));
+      .then((invoiceId) => this._newInvoice(store, invoiceId, patient, visit))
+      .then(defaultItems);
   },
 
   deleteInvoice(invoice) {

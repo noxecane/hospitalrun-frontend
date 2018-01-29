@@ -272,28 +272,25 @@ export default AbstractEditController.extend(AddNewPatient, AllergyActions, Char
     return !isEmpty(this.get('model.additionalDiagnoses'));
   }.property('model.additionalDiagnoses.[]'),
 
-  createInvoice() {
+  _createInvoice() {
     let invoicing = this.get('invoicing');
     let visit = this.get('model');
     let patient = this.get('model.patient');
     let invoiceId = this.get('model.invoice.id');
     if (Ember.isEmpty(invoiceId)) {
-      return invoicing.createInvoice(patient, visit).then(function(invoice) {
-        visit.set('invoice', invoice);
-        return visit.save();
-      });
+      return invoicing.createInvoice(patient, visit)
+        .then((invoice) => {
+          visit.set('invoice', invoice);
+          return visit.save();
+        });
     }
   },
 
   afterUpdate(visit) {
-    function transitionToRealVisit() {
-      return this.transitionToRoute('visits.edit', this.get('model.id'));
-    }
-
     return this.updatePatientVisitFlags(visit)
       .then(this._finishAfterUpdate.bind(this))
-      .then(this.createInvoice.bind(this))
-      .then(transitionToRealVisit.bind(this));
+      .then(this._createInvoice.bind(this))
+      .then(() => this.transitionToRoute('visits.edit', this.get('model.id')));
   },
 
   beforeUpdate() {
