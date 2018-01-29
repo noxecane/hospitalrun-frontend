@@ -265,7 +265,11 @@
         <div role="tabpanel" class="tab-pane" id="visit-vitals">
           <div class="panel detail-section">
             <div class="panel-body">
-              {{patient-vitals vitals=model.vitals normal=true}}
+              {{patient-vitals 
+                  vitals=model.vitals 
+                  normal=true 
+                  editVitals=(action "showEditVitals")
+                  deleteVitals=(action "showDeleteVitals")}}
             </div>
             <div class="panel-footer">
               {{#if canAddVitals}}
