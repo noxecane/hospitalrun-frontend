@@ -14,10 +14,11 @@ export default AbstractEditController.extend(ChargeActions, PatientSubmodule, {
     let isNew = this.get('model.isNew');
     let imagingTypeName = this.get('model.imagingTypeName');
     let selectedImagingType = this.get('selectedImagingType');
+    let hasPayed = this.get('model.hasPayed');
     if (isNew && (Ember.isEmpty(imagingTypeName) || Ember.isArray(selectedImagingType) && selectedImagingType.length > 1)) {
       return false;
     } else {
-      return this.currentUserCan('complete_imaging');
+      return this.currentUserCan('complete_imaging') && !isNew && hasPayed;
     }
   }.property('selectedImagingType.[]', 'model.imagingTypeName'),
 

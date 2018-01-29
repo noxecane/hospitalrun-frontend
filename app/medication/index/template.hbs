@@ -21,9 +21,11 @@
           <td>{{medicationRequest.quantity}}</td>
           <td>{{medicationRequest.status}}</td>
           {{#if showActions}}
-            <td>
-              <button class="btn btn-primary" {{action 'editItem' medicationRequest bubbles=false }}>{{t 'labels.fulfill'}}</button>
-            </td>
+            {{#if model.hasPayed}}
+              <td>
+                <button class="btn btn-primary" {{action 'editItem' medicationRequest bubbles=false }}>{{t 'labels.fulfill'}}</button>
+              </td>
+            {{/if}}
           {{/if}}
         </tr>
       {{/each}}

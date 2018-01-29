@@ -17,6 +17,7 @@ export default AbstractModel.extend(CanEditRequested, DateFormat, MedicationDeta
   requestedDate: DS.attr('date'),
   requestedBy: DS.attr('string'),
   status: DS.attr('string'),
+  hasPayed: DS.attr('boolean', { defaultValue: false }),
 
   // Associations
   inventoryItem: DS.belongsTo('inventory', { async: true }),

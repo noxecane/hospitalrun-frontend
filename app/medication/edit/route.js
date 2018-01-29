@@ -45,6 +45,15 @@ export default AbstractEditRoute.extend(AddToPatientRoute, FulfillRequest, Inven
     }
   },
 
+  afterModel(model) {
+    return model.get('visit.invoice')
+      .then((invoice) => {
+        if (!Ember.isEmpty(invoice)) {
+          model.set('hasPayed', invoice.get('remainingBalance') == 0);
+        }
+      });
+  },
+
   setupController(controller, model) {
     this._super(controller, model);
     let inventoryQuery = {

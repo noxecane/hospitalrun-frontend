@@ -11,7 +11,9 @@ export default AbstractEditController.extend(AddNewPatient, FulfillRequest, Inve
   expenseAccountList: Ember.computed.alias('medicationController.expenseAccountList'),
 
   canFulfill: function() {
-    return this.currentUserCan('fulfill_medication');
+    let isNew = this.get('model.isNew');
+    let hasPayed = this.get('model.hasPayed');
+    return this.currentUserCan('fulfill_medication') && !isNew && hasPayed;
   }.property(),
 
   isFulfilled: function() {

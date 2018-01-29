@@ -13,10 +13,11 @@ export default AbstractEditController.extend(ChargeActions, PatientSubmodule, {
     let isNew = this.get('model.isNew');
     let labTypeName = this.get('model.labTypeName');
     let selectedLabType = this.get('selectedLabType');
+    let hasPayed = this.get('model.hasPayed');
     if (isNew && (Ember.isEmpty(labTypeName) || (Ember.isArray(selectedLabType) && selectedLabType.length > 1))) {
       return false;
     } else {
-      return this.currentUserCan('complete_lab');
+      return this.currentUserCan('complete_lab') && !isNew && hasPayed;
     }
   }.property('selectedLabType.[]', 'model.labTypeName'),
 

@@ -27,5 +27,15 @@ export default AbstractEditRoute.extend(AddToPatientRoute, ChargeRoute, PatientL
     };
     let customForms = this.get('customForms');
     return customForms.setDefaultCustomForms(['lab'], newLabData);
+  },
+
+  afterModel(model) {
+    return this._super(model)
+      .then(() => model.get('visit.invoice'))
+      .then((invoice) => {
+        if (!Ember.isEmpty(invoice)) {
+          model.set('hasPayed', invoice.get('remainingBalance') == 0);
+        }
+      });
   }
 });
