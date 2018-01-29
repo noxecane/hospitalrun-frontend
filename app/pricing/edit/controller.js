@@ -111,6 +111,11 @@ export default AbstractEditController.extend(ReturnTo, {
 
   updateCapability: 'add_pricing',
 
+  beforeUpdate() {
+    this.send('categoryChanged', this.get('model.category'));
+    return this._super(this.get('model'));
+  },
+
   afterUpdate(record) {
     let message = `The pricing record for ${record.get('name')} has been saved.`;
     this.displayAlert('Pricing Item Saved', message);
