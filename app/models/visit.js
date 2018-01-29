@@ -70,6 +70,8 @@ export default AbstractModel.extend({
   reports: DS.hasMany('report', { async: true }),
   invoice: DS.belongsTo('invoice', { async: true }),
 
+  lastVital: Ember.computed.alias('vitals.lastObject'),
+
   diagnosisList: computed('diagnoses.[]', function() {
     let diagnoses = get(this, 'diagnoses');
     let diagnosisList = diagnoses.map((diagnosis) => {

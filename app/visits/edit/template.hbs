@@ -97,8 +97,16 @@
                 }}
                 <div class="col-sm-2 col-sm-offset-5">
                   {{#link-to 'invoices.edit' model.invoice.id class="btn btn-primary aligned" bubbles=false }}
-                    View Invoice
+                    {{t "visits.buttons.checkInvoice"}}
                   {{/link-to}}
+                </div>
+              </div>
+            {{/if}}
+            {{#if model.lastVital}}
+              <div class="row">
+                <div class="form-group col-sm-12">
+                  <label class="control-label">{{t "visits.labels.latestVital"}}</label>
+                  {{patient-vitals vital=model.lastVital normal=false}}
                 </div>
               </div>
             {{/if}}

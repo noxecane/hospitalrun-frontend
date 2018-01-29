@@ -1,0 +1,53 @@
+<table class="table">
+  <tr class="table-header">
+    <th>{{t "labels.takenBy"}}</th>
+    <th>{{t "labels.date"}}</th>
+    <th>{{t "vitals.labels.temperature"}}</th>
+    <th>{{t "vitals.labels.weight"}}</th>
+    <th>{{t "vitals.labels.height"}}</th>
+    <th>{{t "vitals.labels.sbp"}}</th>
+    <th>{{t "vitals.labels.dbp"}}</th>
+    <th>{{t "vitals.labels.heartRate"}}</th>
+    <th>{{t "vitals.labels.respiratoryRate"}}</th>
+    {{#if normal}}
+      <th>{{t "labels.delete"}}</th>
+    {{/if}}
+  </tr>
+  {{#if normal}}
+    {{#each vitals as |vital|}}
+      <tr>
+        <td>{{vital.modifiedBy}}</td>
+        <td>{{date-format vital.dateRecorded format="l h:mm A"}}</td>
+        <td class="vitals alert {{if (within-range vital.temperature 35.5 37.2) "alert-success" "alert-danger"}}">{{vital.temperature}}</td>
+        <td>{{vital.weight}}</td>
+        <td>{{vital.height}}</td>
+        <td class="vitals alert {{if (within-range vital.sbp 90 140) "alert-success" "alert-danger"}}">{{vital.sbp}}</td>
+        <td class="vitals alert {{if (within-range vital.heartRate 60 109) "alert-success" "alert-danger"}}">{{vital.heartRate}}</td> 
+        <td class="vitals alert {{if (within-range vital.dbp 60 90) "alert-success" "alert-danger"}}">{{vital.dbp}}</td>
+        <td class="vitals alert {{if (within-range vital.respiratoryRate 12 25) "alert-success" "alert-danger"}}">{{vital.respiratoryRate}}</td>
+        <td>
+          {{#if canAddVitals}}
+            <button class="btn btn-default neutral" {{action "showEditVitals" vital}}>{{t 'labels.edit'}}</button>
+          {{/if}}
+          {{#if canDeleteVitals}}
+            <button class="btn btn-default warning" {{action "showDeleteVitals" vital}}>
+            <span class="octicon octicon-x"></span> {{t "buttons.delete"}}
+            </button>
+          {{/if}}
+        </td>
+      </tr>
+    {{/each}}
+  {{else}}
+    <tr>
+      <td>{{vital.modifiedBy}}</td>
+      <td>{{date-format vital.dateRecorded format="l h:mm A"}}</td>
+      <td class="vitals alert {{if (within-range vital.temperature 35.5 37.2) "alert-success" "alert-danger"}}">{{vital.temperature}}</td>
+      <td>{{vital.weight}}</td>
+      <td>{{vital.height}}</td>
+      <td class="vitals alert {{if (within-range vital.sbp 90 140) "alert-success" "alert-danger"}}">{{vital.sbp}}</td>
+      <td class="vitals alert {{if (within-range vital.heartRate 60 109) "alert-success" "alert-danger"}}">{{vital.heartRate}}</td> 
+      <td class="vitals alert {{if (within-range vital.dbp 60 90) "alert-success" "alert-danger"}}">{{vital.dbp}}</td>
+      <td class="vitals alert {{if (within-range vital.respiratoryRate 12 25) "alert-success" "alert-danger"}}">{{vital.respiratoryRate}}</td>
+    </tr>
+  {{/if}}
+</table>

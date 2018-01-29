@@ -1,0 +1,12 @@
+.vitals.alert {
+  border-color: transparent;
+  background: transparent;
+
+  &.alert-danger {
+    color: $red;
+  }
+
+  &.alert-success {
+    color: $green;
+  }
+}

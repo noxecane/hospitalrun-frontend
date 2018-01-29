@@ -1444,7 +1444,8 @@ export default {
       statusDischarged: 'Discharged',
       visitDate: 'Visit Date',
       visitInformation: 'Visit Information',
-      visitType: 'Visit Type'
+      visitType: 'Visit Type',
+      latestVital: 'Latest Vitals'
     },
     messages: {
       checkOut: 'Are you sure you wish to check out {{patientName}}?',
