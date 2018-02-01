@@ -91,20 +91,20 @@
             {{expand-text property="reasonForVisit" label=(t 'visits.labels.reasonForVisit') rows=3 }}
             {{#if canAddBillingDiagnosis}}
               <div class="row">
-                {{select-or-typeahead className="col-sm-5" property="primaryBillingDiagnosis"
+                {{select-or-typeahead className="col-sm-5 form-group" property="primaryBillingDiagnosis"
                   label=(t "visits.labels.finalDiagnosis")  list=diagnosisList
                   selection=model.primaryBillingDiagnosis hint=false
                 }}
-                <div class="col-sm-2 col-sm-offset-5">
-                  {{#link-to 'invoices.edit' model.invoice.id class="btn btn-primary aligned" bubbles=false }}
+                <div class="col-sm-2 col-sm-offset-5 form-group">
+                  <button class="btn btn-primary aligned" {{action "showInvoice"}}>
                     {{t "visits.buttons.checkInvoice"}}
-                  {{/link-to}}
+                  </button>
                 </div>
               </div>
             {{/if}}
             {{#if model.lastVital}}
               <div class="row">
-                <div class="form-group col-sm-12">
+                <div class="col-sm-12">
                   <label class="control-label">{{t "visits.labels.latestVital"}}</label>
                   {{patient-vitals vital=model.lastVital normal=false}}
                 </div>

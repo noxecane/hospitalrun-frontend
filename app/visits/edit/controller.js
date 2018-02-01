@@ -377,6 +377,13 @@ export default AbstractEditController.extend(AddNewPatient, AllergyActions, Char
       this.savePatientAllergy(patient, newAllergy);
     },
 
+    showInvoice() {
+      this.get('model.invoice').then((invoice) => {
+        invoice.set('returnToVisit', this.get('model.id'));
+        this.transitionToRoute('invoices.edit', invoice.get('id'));
+      });
+    },
+
     addDiagnosis(newDiagnosis) {
       this.addDiagnosisToModelAndPatient(newDiagnosis);
     },
