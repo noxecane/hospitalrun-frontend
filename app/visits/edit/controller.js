@@ -379,8 +379,10 @@ export default AbstractEditController.extend(AddNewPatient, AllergyActions, Char
 
     showInvoice() {
       this.get('model.invoice').then((invoice) => {
-        invoice.set('returnToVisit', this.get('model.id'));
-        this.transitionToRoute('invoices.edit', invoice.get('id'));
+        if (!Ember.isEmpty(invoice)) {
+          invoice.set('returnToVisit', this.get('model.id'));
+          this.transitionToRoute('invoices.edit', invoice.get('id'));
+        }
       });
     },
 
