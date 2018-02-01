@@ -39,10 +39,455 @@
         </div>
       </div>
     {{/if}}
-    {{#if canComplete}}
-      {{em-input property="result" label=(t 'labels.result') class="test-result-input"}}
-    {{/if}}
     {{expand-text property="notes" label=(t 'labels.notes') rows=3 }}
     {{custom-form-manager model=model formType="lab"}}
+    {{#if canComplete}}
+      <fieldset class="form-group" id="haematology">
+        <a data-toggle="collapse" data-parent="#haematology" href="#haematology-fields">
+          <legend class="col-form-legend">{{t 'labs.labels.haematology'}}</legend>
+        </a>
+        <div id="haematology-fields" class="row collapse">
+          {{em-input
+            property="haematology_hb" label="Hb(g/dl)" 
+            class="form-input-group col-xs-3" disabled=isComplete}}
+          {{em-input
+            property="haematology_pcv" label="P.V.C(L/L)" 
+            class="form-input-group col-xs-3"  
+            style="color: {{if (within-range haematology_pcv 0.35 0.45) 'green' 'red'}}"}}
+          {{em-input
+            property="haematology_wbc" label="WBC(L)" 
+            class="form-input-group col-xs-3" disabled=isComplete}}
+          {{em-input
+            property="haematology_neut" label="Neut(%)" 
+            class="form-input-group col-xs-3" disabled=isComplete 
+            style="color: {{if (within-range haematology_neut 35.5 37.2) 'green' 'red'}}"}}
+          {{em-input
+            property="haematology_lymph" label="Lymph(%)" 
+            class="form-input-group col-xs-3" disabled=isComplete
+            style="color: {{if (within-range haematology_lymph 20 50) 'green' 'red'}}"}}
+          {{em-input
+            property="haematology_eosin" label="Eosin(%)" 
+            class="form-input-group col-xs-3" disabled=isComplete
+            style="color: {{if (within-range haematology_eosin 1 8) 'green' 'red'}}"}}
+          {{em-input
+            property="haematology_mono" label="Mono(%)" 
+            class="form-input-group col-xs-3" disabled=isComplete
+            style="color: {{if (within-range haematology_mono 0 2) 'green' 'red'}}"}}
+          {{em-input
+            property="haematology_bas" label="Bas Retics(%)" 
+            class="form-input-group col-xs-3" disabled=isComplete
+            style="color: {{if (within-range haematology_bas 0 2) 'green' 'red'}}"}}
+          {{em-input
+            property="haematology_esr" label="ESR(mm/hr)(Westergreen)" 
+            class="form-input-group col-xs-3" disabled=isComplete
+            style="color: {{if (within-range haematology_esr 0 20) 'green' 'red'}}"}}
+          {{em-input
+            property="haematology_platelets" label="Platelets(L)" 
+            class="form-input-group col-xs-3" disabled=isComplete}}
+          {{em-input
+            property="haematology_bleeding_time" label="Bleeding time(min)" 
+            class="form-input-group col-xs-3" disabled=isComplete
+            style="color: {{if (within-range haematology_bleeding_time 2 7) 'green' 'red'}}" }}
+          {{em-input
+            property="haematology_clothing_time" label="Clothing time(min)" 
+            class="form-input-group col-xs-3" disabled=isComplete
+            style="color: {{if (within-range haematology_clothing_time 2 9) 'green' 'red'}}" }}
+        </div>
+      </fieldset>
+      <fieldset class="form-group">
+        <a data-toggle="collapse" data-parent="#chemistry" href="#chemistry-fields">
+          <legend class="col-form-legend">{{t 'labs.labels.chemistry'}}</legend>
+        </a>
+        <div id="chemistry-fields" class="row collapse">
+          {{em-input 
+            property="chemistry_sodium" label="Sodium(mMcl/L)" 
+            class="form-input-group col-xs-3" disabled=isComplete 
+            style="color: {{if (within-range chemistry_sodium 135 150) 'green' 'red'}}" }}
+          {{em-input 
+            property="chemistry_potassium" label="Potassium(mMol/IL)" 
+            class="form-input-group col-xs-3" disabled=isComplete 
+            style="color: {{if (within-range chemistry_potassium 3.5 5.5) 'green' 'red'}}" }}
+          {{em-input 
+            property="chemistry_chlorine" label="Chlorine(mM.I/L)" 
+            class="form-input-group col-xs-3" disabled=isComplete 
+            style="color: {{if (within-range chemistry_chlorine 97 108) 'green' 'red'}}"}}
+          {{em-input 
+            property="chemistry_bicarb" label="Bicarb(mMol/L)" 
+            class="form-input-group col-xs-3" disabled=isComplete 
+            style="color: {{if (within-range chemistry_bicarb 22 31) 'green' 'red'}}" }}
+          {{em-input 
+            property="chemistry_urea" label="Urea(mg/di)" 
+            class="form-input-group col-xs-3" disabled=isComplete 
+            style="color: {{if (within-range chemistry_urea 15 40) 'green' 'red'}}" }}
+          {{em-input 
+            property="chemistry_uric_acid" label="Uric Acid(mg/dl)" 
+            class="form-input-group col-xs-3" disabled=isComplete  
+            style="color: {{if (within-range chemistry_uric_acid 2 7) 'green' 'red'}}"}}
+          
+          {{em-input 
+            property="chemistry_creatine" label="Creatinine(mg/dl)" 
+            class="form-input-group col-xs-3" disabled=isComplete 
+            style="color: {{if (within-range chemistry_creatine 0.5 1.2) 'green' 'red'}}" }}
+          {{em-input 
+            property="chemistry_calcium" label="Calcuim(mg/dl)" 
+            class="form-input-group col-xs-3" disabled=isComplete 
+            style="color: {{if (within-range chemistry_calcium 2 9) 'green' 'red'}}" }}
+          {{em-input 
+            property="chemistry_posph" label="Poshp (inorg)(mg/dl)" 
+            class="form-input-group col-xs-3" disabled=isComplete 
+            style="color: {{if (within-range chemistry_posph 2 5) 'green' 'red'}}" }}
+          {{em-input 
+            property="chemistry_cholesterol" label="Cholesterol(mg/dl)" 
+            class="form-input-group col-xs-3" disabled=isComplete 
+            style="color: {{if (within-range chemistry_cholesterol8 10) 'green' 'red'}}" }}
+          {{em-input 
+            property="chemistry_triglycerides" label="Triglycerides(mg/dl)" 
+            class="form-input-group col-xs-3" disabled=isComplete 
+            style="color: {{if (within-range chemistry_triglycerides 2 9) 'green' 'red'}}"}}
+          {{em-input 
+            property="chemistry_amylase" label="Amylase(u/L)" 
+            class="form-input-group col-xs-3" disabled=isComplete 
+            style="color: {{if (within-range chemistry_amylase 30 70) 'green' 'red'}}"}}
+          {{em-input 
+            property="chemistry_bilirubin_total" label="Bilirubin Total(UMol/L)" 
+            class="form-input-group col-xs-3" disabled=isComplete 
+            style="color: {{if (within-range chemistry_bilirubin_total 1.20 1.20) 'green' 'red'}}"}}
+          {{em-input 
+            property="chemistry_bilirubin_conj" label="Bilirubin Conj(UMol/L)" 
+            class="form-input-group col-xs-3" disabled=isComplete 
+            style="color: {{if (within-range chemistry_bilirubin_conj 1 6) 'green' 'red'}}" }}
+          {{em-input 
+            property="chemistry_bilirubin_unconj" label="Bilirubin Unconj(UNo/L)" 
+            class="form-input-group col-xs-3" disabled=isComplete 
+            style="color: {{if (within-range chemistry_bilirubin_unconj 2 13) 'green' 'red'}}" }}
+          {{em-input 
+            property="chemistry_serum_total_protein" label="Serum Total Protein(g/L)" 
+            class="form-input-group col-xs-3" disabled=isComplete 
+            style="color: {{if (within-range chemistry_serum_total_protein 60 80) 'green' 'red'}}" }}
+          {{em-input 
+            property="chemistry_serum_albumin" label="Serum Albumin(g/L)" 
+            class="form-input-group col-xs-3" disabled=isComplete 
+            style="color: {{if (within-range chemistry_serum_albumin 35 55) 'green' 'red'}}" }}
+          {{em-input 
+            property="chemistry_serum_globulin" label="Serum Globulin(g/L)" 
+            class="form-input-group col-xs-3" disabled=isComplete  
+            style="color: {{if (within-range chemistry_serum_globulin 20 40) 'green' 'red'}}"}}
+          {{em-input 
+            property="chemistry_ast_got" label="AST (GOT)(U/L)" 
+            class="form-input-group col-xs-3" disabled=isComplete 
+            style="color: {{if (within-range chemistry_ast_got 0 12) 'green' 'red'}}"}}
+          {{em-input 
+            property="chemistry_alt_gpt" label="ALT (GPT)(U/L)" 
+            class="form-input-group col-xs-3" disabled=isComplete 
+            style="color: {{if (within-range chemistry_alt_gpt 0 12) 'green' 'red'}}"}}
+          {{em-input 
+            property="chemistry_alk_phos" label="ALK Phos" 
+            class="form-input-group col-xs-3" disabled=isComplete 
+            style="color: {{if (within-range chemistry_alk_phos 9 138) 'green' 'red'}}" }}
+          {{em-input 
+            property="chemistry_acid_phos" label="Acid Phos(u/L)" 
+            class="form-input-group col-xs-3" disabled=isComplete 
+            style="color: {{if (within-range chemistry_acid_phos 0 13) 'green' 'red'}}" }}
+          {{em-input 
+            property="chemistry_GT" label="GT(ui/L)" 
+            class="form-input-group col-xs-3" disabled=isComplete 
+            style="color: {{if (within-range chemistry_GT  9 50) 'green' 'red'}}" }}
+          {{em-input 
+            property="chemistry_LDL" label="LDL(mMoL/L)" 
+            class="form-input-group col-xs-3" disabled=isComplete 
+            style="color: {{if (within-range chemistry_LDL 0 4.9) 'green' 'red'}}" }}
+          {{em-input 
+            property="chemistry_LDH" label="LDH(iu/L)" 
+            class="form-input-group col-xs-3" disabled=isComplete 
+            style="color: {{if (within-range chemistry_LDH 90 300) 'green' 'red'}}" }}
+          {{em-input 
+            property="chemistry_HDL" label="HDL(mMol/L)" 
+            class="form-input-group col-xs-3" disabled=isComplete 
+            style="color: {{if (within-range chemistry_HDL 0.9 ) 'green' 'red'}}"}}
+          {{em-input 
+            property="chemistry_CPK" label="CPK(Iu/L)" 
+            class="form-input-group col-xs-3" disabled=isComplete 
+            style="color: {{if (within-range chemistry_CPK 0 130) 'green' 'red'}}" }}
+        </div>
+      </fieldset>
+      <fieldset class="form-group">
+        <a data-toggle="collapse" data-parent="#pregnancyTest" href="#pregnancyTest-fields">
+          <legend class="col-form-legend">{{t 'labs.labels.pregnancyTest'}}</legend>
+        </a>
+        <div id="pregnancyTest-fields" class="row collapse">
+          {{em-text 
+            row=2 property="microbiology_pus_cell" label="Puss Cell" 
+            class="form-input-group col-xs-4" disabled=isComplete }}
+          {{em-text 
+            row=2 property="microbiology_red_blood_cell" label="Red Blood Cell" 
+            class="form-input-group col-xs-4" disabled=isComplete}}
+          {{em-text 
+            row=2 property="microbiology_epithetial_cells" label="Epithetial Cells" 
+            class="form-input-group col-xs-4" disabled=isComplete }}
+          {{em-text 
+            row=2 property="microbiology_casts" label="Casts" 
+            class="form-input-group col-xs-4" disabled=isComplete }}
+          {{em-text 
+            row=2 property="microbiology_crystal" label="Crystals" 
+            class="form-input-group col-xs-4" disabled=isComplete}}
+          {{em-text 
+            row=2 property="microbiology_bacterial" label="Bacterial" 
+            class="form-input-group col-xs-4" disabled=isComplete }}
+        </div>
+      </fieldset>
+      <fieldset class="form-group">
+        <a data-toggle="collapse" data-parent="#csf" href="#csf-fields">
+          <legend class="col-form-legend">{{t 'labs.labels.csf'}}</legend>
+        </a>
+        <div id="csf-fields" class="row collapse">
+          {{em-text 
+            row=2 property="microbiology_csf_appearance" label="Appearance" 
+            class="form-input-group col-xs-4" disabled=isComplete }}
+          {{em-text 
+            row=2 property="microbiology_wbc" label="WBC" 
+            class="form-input-group col-xs-4" disabled=isComplete}}
+          {{em-text 
+            row=2 property="microbiology_diff" label="Diff" 
+            class="form-input-group col-xs-4" disabled=isComplete }}
+        </div>
+      </fieldset>
+
+      <fieldset class="form-group">
+        <a data-toggle="collapse" data-parent="#gramStain" href="#gramStain-fields">
+          <legend class="col-form-legend">{{t 'labs.labels.gramStain'}}</legend>
+        </a>
+        <div id="gramStain-fields" class="row collapse">
+          {{em-input 
+            property="microbiology_csf_sugar" label="Sugar" 
+            class="form-input-group col-xs-4" disabled=isComplete }}
+          {{em-input 
+            property="microbiology_csf_protein" label="Protein" 
+            class="form-input-group col-xs-4" disabled=isComplete }}
+          {{em-input 
+            property="microbiology_csf_chlor" label="Chlor" 
+            class="form-input-group col-xs-4" disabled=isComplete }}
+        </div>
+      </fieldset>
+
+      <fieldset class="form-group">
+        <a data-toggle="collapse" data-parent="#sputum" href="#sputum-fields">
+          <legend class="col-form-legend">{{t 'labs.labels.sputum'}}</legend>
+        </a>
+        <div id="sputum-fields" class="row collapse">
+          {{em-text 
+            row=2 property="microbiology_sputum_appearance" label="Appearance" 
+            class="form-input-group col-xs-12" disabled=isComplete}}  
+          {{em-text 
+            row=2 property="microbiology_afb" label="AFB" 
+            class="form-input-group col-xs-6" disabled=isComplete}}
+          {{em-text 
+            row=2 property="microbiology_heaf" label="HEAF/Mantoux" 
+            class="form-input-group col-xs-6" disabled=isComplete}}
+        </div>
+      </fieldset>
+      <fieldset class="form-group">
+        <a data-toggle="collapse" data-parent="#stool" href="#stool-fields">
+          <legend class="col-form-legend">{{t 'labs.labels.stool'}}</legend>
+        </a>
+        <div id="stool-fields" class="row collapse">
+          {{em-text 
+            row=2 property="microbiology.stool_appearance" label="Apearance" 
+            class="form-input-group col-xs-4" disabled=isComplete}}
+          {{em-text 
+            row=2 property="microbiology.occult_blood" label="Occult Blood" 
+            class="form-input-group col-xs-4" disabled=isComplete}}
+          {{em-text 
+            row=2 property="microbiology.microscopy" label="Microscopy" 
+            class="form-input-group col-xs-4" disabled=isComplete}}
+        </div>
+      </fieldset>
+      <fieldset class="form-group">
+        <a data-toggle="collapse" data-parent="#swabs" href="#swabs-fields">
+          <legend class="col-form-legend">{{t 'labs.labels.swabs'}}</legend>
+        </a>
+        <div id="swabs-fields" class="row collapse">
+          {{em-text
+            property="microbiology_urethral" label="Urethral" 
+            class="form-input-group col-xs-4" disabled=isComplete rows=3 }}
+          {{em-text 
+            property="microbiology_vagina" label="Vagina" 
+            class="form-input-group col-xs-4" disabled=isComplete rows=3}}
+          {{em-text 
+            property="microbiology_throat" label="Throat" 
+            class="form-input-group col-xs-4" disabled=isComplete rows=3}}
+          {{em-text
+            property="microbiology_wound" label="Wound" 
+            class="form-input-group col-xs-4" disabled=isComplete rows=3}}
+          {{em-text 
+            property="microbiology_eye" label="Eye" 
+            class="form-input-group col-xs-4" disabled=isComplete rows=3}}
+          {{em-text 
+            property="microbiology_ear" label="Ear" 
+            class="form-input-group col-xs-4" disabled=isComplete rows=3}}
+          {{em-text 
+            property="microbiology_others" label="Others" 
+            class="form-input-group col-xs-12" disabled=isComplete  rows=3}}
+        </div>
+      </fieldset>
+      <fieldset class="form-group">
+        <a data-toggle="collapse" data-parent="#time" href="#time-fields">
+          <legend class="col-form-legend">{{t 'labs.labels.time'}}</legend>
+        </a>
+        <div id="time" class="collapse">
+          <div class="row form-group">
+            {{date-picker 
+              property="sfa_time_collected" label="Collected" 
+              class="form-input-group col-xs-4" disabled=isComplete showTime=true}}
+            {{date-picker 
+              property="sfa_time_recieved" label="Recieved" 
+              class="form-input-group col-xs-4" disabled=isComplete showTime=true}}
+            {{date-picker 
+              property="sfa_time_analysed" label="Analysed" 
+              class="form-input-group col-xs-4" disabled=isComplete showTime=true}}
+          </div>
+          <div class="row form-group">
+             {{em-input 
+              property="sfa_volume" label="Volume" 
+              class="form-input-group col-xs-4" disabled=isComplete }}
+             {{em-input 
+              property="sfa_consistency" label="Consistency" 
+              class="form-input-group col-xs-4" disabled=isComplete }}
+             {{em-input 
+              property="sfa_colour" label="Colour" 
+              class="form-input-group col-xs-4" disabled=isComplete }}
+          </div>
+          <div class="row form-group">
+            {{em-input 
+              property="sfa_motility" label="Motility" 
+              class="form-input-group col-xs-4" disabled=isComplete}}
+            {{em-input 
+              property="sfa_abnormality" label="Abnormality" 
+              class="form-input-group col-xs-4" disabled=isComplete}}
+            {{em-input 
+              property="sfa_microscopy" label="Microscopy" 
+              class="form-input-group col-xs-4" disabled=isComplete}}
+          </div>
+          <div class="row form-group">
+            {{em-input 
+              property="sfa_count" label="Count" 
+              class="form-input-group col-xs-4" disabled=isComplete}}
+            {{em-text 
+              property="sfa_comment" label="Comment" 
+              class="form-input-group col-xs-12" disabled=isComplete}}
+          </div>
+        </div>
+      </fieldset>
+      <fieldset>
+        <a data-toggle="collapse" data-parent="#others" href="#others-fields">
+          <legend class="col-form-legend">{{t 'labs.labels.others'}}</legend>
+        </a>
+        <div id="others-fields" class="collapse">
+          <table class="table">
+            <tr>
+              <td class="col-xs-2">{{t 'labs.labels.ampicilin'}}</td>
+              <td>
+                {{em-input property="sfa_ampicilin" 
+                  class="form-input-group col-xs-4" disabled=isComplete}}</td>
+            </tr>
+            <tr>
+              <td class="col-xs-2">{{t 'labs.labels.nalidixrantion'}}</td>
+              <td>
+                {{em-input property="sfa_nalidixrantion" 
+                  class="form-input-group col-xs-4" disabled=isComplete}}</td>
+            </tr>
+            <tr>
+              <td class="col-xs-2">{{t 'labs.labels.compSulphonamine'}}</td>
+              <td>
+                {{em-input property="sfa_comp_sulphonamine" 
+                  class="form-input-group col-xs-4" disabled=isComplete}}</td>
+            </tr>
+            <tr>
+              <td class="col-xs-2">{{t 'labs.labels.streptomycin'}}</td>
+              <td>
+                {{em-input property="sfa_comp_streptomycin" 
+                  class="form-input-group col-xs-4" disabled=isComplete}}</td>
+            </tr>
+            <tr>
+              <td class="col-xs-2">{{t 'labs.labels.tetracycline'}}</td>
+              <td>
+                {{em-input property="sfa_tetracycline" 
+                  class="form-input-group col-xs-4" disabled=isComplete}}</td>
+            </tr>
+            <tr>
+              <td class="col-xs-2">{{t 'labs.labels.septrine'}}</td>
+              <td>
+                {{em-input property="sfa_septrine" 
+                  class="form-input-group col-xs-4" disabled=isComplete}}</td>
+            </tr>
+            <tr>
+              <td class="col-xs-2">{{t 'labs.labels.furtum'}}</td>
+              <td>
+                {{em-input property="sfa_furtum" 
+                  class="form-input-group col-xs-4" disabled=isComplete}}</td>
+            </tr>
+            <tr>
+              <td class="col-xs-2">{{t 'labs.labels.zinnat'}}</td>
+              <td>
+                {{em-input property="sfa_zinnat" 
+                  class="form-input-group col-xs-4" disabled=isComplete}}</td>
+            </tr>
+            <tr>
+              <td class="col-xs-2">{{t 'labs.labels..carbenicillin'}}</td>
+              <td>
+                {{em-input property="sfa_carbenicillin" 
+                  class="form-input-group col-xs-4" disabled=isComplete}}</td>
+            </tr>
+            <tr>
+              <td class="col-xs-2">{{t 'labs.labels.chlorramphenicol'}}</td>
+              <td>
+                {{em-input property="sfa_chlorramphenicol" 
+                  class="form-input-group col-xs-4" disabled=isComplete}}</td>
+            </tr>
+            <tr>
+              <td class="col-xs-2">{{t 'labs.labels.cloxacillin'}}</td>
+              <td>
+                {{em-input property="sfa_cloxacillin" 
+                  class="form-input-group col-xs-4" disabled=isComplete}}</td>
+            </tr>
+            <tr>
+              <td class="col-xs-2">{{t 'labs.labels.erythromycin'}}</td>
+              <td>
+                {{em-input property="sfa_erythromycin" 
+                  class="form-input-group col-xs-4" disabled=isComplete}}</td>
+            </tr>
+            <tr>
+              <td class="col-xs-2">{{t 'labs.labels.ceptraixone'}}</td>
+              <td>
+                {{em-input property="sfa_ceptraixone" 
+                  class="form-input-group col-xs-4" disabled=isComplete}}</td>
+            </tr>
+            <tr>
+              <td class="col-xs-2">{{t 'labs.labels.penicillinAmpicox'}}</td>
+              <td>
+                {{em-input property="sfa_penicillin_ampicox" 
+                  class="form-input-group col-xs-4" disabled=isComplete}}</td>
+            </tr>
+            <tr>
+              <td class="col-xs-2">{{t 'labs.labels.ciproxin'}}</td>
+              <td>
+                {{em-input property="sfa_ciproxin" 
+                  class="form-input-group col-xs-4" disabled=isComplete}}</td>
+            </tr>
+            <tr>
+              <td class="col-xs-2">{{t 'labs.labels.gentamycin'}}</td>
+              <td>
+                {{em-input property="sfa_gentamycin" 
+                  class="form-input-group col-xs-4" disabled=isComplete}}</td>
+            </tr>
+            <tr>
+              <td class="col-xs-2">{{t 'labs.labels.amoxycillin'}}</td>
+              <td>
+                {{em-input property="sfa_amoxycillin" 
+                  class="form-input-group col-xs-4" disabled=isComplete}}</td>
+            </tr>
+          </table>
+        </div>
+      </fieldset>
+    {{/if}}
   {{/em-form}}
 {{/edit-panel}}

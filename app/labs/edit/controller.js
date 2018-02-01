@@ -21,6 +21,10 @@ export default AbstractEditController.extend(ChargeActions, PatientSubmodule, {
     }
   }.property('selectedLabType.[]', 'model.labTypeName'),
 
+  isComplete: function() {
+    return this.get('model.status') === 'Completed';
+  }.property('model.status'),
+
   actions: {
     completeLab() {
       this.set('model.status', 'Completed');
