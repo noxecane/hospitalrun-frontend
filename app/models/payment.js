@@ -13,6 +13,7 @@ export default AbstractModel.extend({
   expenseAccount: DS.attr('string'),
   notes: DS.attr('string'),
   paymentType: DS.attr('string'),
+  method: DS.attr('string'),
 
   // Associations
   invoice: DS.belongsTo('invoice', { async: false }),

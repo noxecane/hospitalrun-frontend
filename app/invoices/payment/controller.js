@@ -1,5 +1,6 @@
 import AbstractEditController from 'hospitalrun/controllers/abstract-edit-controller';
 import Ember from 'ember';
+import SelectValues from 'hospitalrun/utils/select-values';
 import PatientSubmodule from 'hospitalrun/mixins/patient-submodule';
 
 export default AbstractEditController.extend(PatientSubmodule, {
@@ -15,6 +16,10 @@ export default AbstractEditController.extend(PatientSubmodule, {
     this.send('closeModal');
     this.displayAlert(title, message);
   },
+
+  paymentMethods: function() {
+    return SelectValues.selectValues(['Cash', 'P.O.S', 'Credit Card']);
+  }.property(),
 
   currentPatient: function() {
     let type = this.get('model.paymentType');
@@ -47,6 +52,11 @@ export default AbstractEditController.extend(PatientSubmodule, {
     } else {
       this.set('newPayment', false);
     }
+
+    if (!this.get('model.method')) {
+      this.set('model.method', 'Cash');
+    }
+
     let patient = this.get('currentPatient');
     this.set('model.charityPatient', patient.get('patientType') === 'Charity');
     return Ember.RSVP.resolve();

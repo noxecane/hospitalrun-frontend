@@ -314,6 +314,7 @@ export default {
       externalInvoiceNumber: 'External Invoice #',
       hmoCom: 'HMO/COM',
       insurance: 'National Insurance',
+      paymentMethod: 'Payment Type',
       paymentProfile: 'Payment Profile',
       paymentsDeposits: 'Payments/Deposits',
       pricingPanelOverrides: 'Pricing profile overrides',
