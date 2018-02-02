@@ -248,6 +248,12 @@ export default Ember.Mixin.create({
           capability: 'invoices'
         },
         {
+          title: 'Ongoing Invoices',
+          iconClass: 'octicon-chevron-right',
+          route: 'invoices.ongoing',
+          capability: 'invoices'
+        },
+        {
           title: 'Prices',
           iconClass: 'octicon-chevron-right',
           route: 'pricing.index',

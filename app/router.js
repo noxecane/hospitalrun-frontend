@@ -69,6 +69,7 @@ Router.map(function() {
     this.route('review', { path: '/review/:invoice_id' });
     this.route('edit', { path: '/edit/:invoice_id' });
     this.route('search', { path: '/search/:search_text' });
+    this.route('ongoing');
   });
 
   this.route('labs', function() {
