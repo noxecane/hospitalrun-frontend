@@ -37,6 +37,16 @@
         prompt=" "
         selected=model.paymentProfile
       }}
+      <div class="col-xs-3 checkbox-label-space">
+        <div class="form-check">
+          <label>
+            <input type="checkbox"
+              checked={{model.pendingPayment}}
+              onchange={{action "setPendingPayment" value="target.checked"}}>
+              {{t 'billing.labels.pendingPayment'}}
+          </label>
+        </div>
+      </div>
     </div>
   {{/em-form}}
   <form class="form-inline">

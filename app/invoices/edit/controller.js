@@ -108,6 +108,10 @@ export default AbstractEditController.extend(NumberFormat, PatientSubmodule, Pub
       this.transitionToRoute('print.invoice', this.get('model'));
     },
 
+    setPendingPayment(pending) {
+      this.set('model.pendingPayment', pending);
+    },
+
     removePayment(removeInfo) {
       let payments = this.get('model.payments');
       let payment = removeInfo.itemToRemove;

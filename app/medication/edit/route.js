@@ -49,7 +49,7 @@ export default AbstractEditRoute.extend(AddToPatientRoute, FulfillRequest, Inven
     return model.get('visit.invoice')
       .then((invoice) => {
         if (!Ember.isEmpty(invoice)) {
-          model.set('hasPayed', invoice.get('remainingBalance') == 0);
+          model.set('hasPayed', invoice.get('canTransact'));
         }
       });
   },

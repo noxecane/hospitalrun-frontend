@@ -316,6 +316,7 @@ export default {
       insurance: 'National Insurance',
       paymentMethod: 'Payment Type',
       paymentProfile: 'Payment Profile',
+      pendingPayment: 'Pending Payment',
       paymentsDeposits: 'Payments/Deposits',
       pricingPanelOverrides: 'Pricing profile overrides',
       pricingProfile: 'Pricing Profile',

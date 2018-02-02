@@ -15,6 +15,7 @@ export default AbstractModel.extend(DateFormat, NumberFormat, {
   patientInfo: DS.attr('string'), // Needed for searching
   remarks: DS.attr('string'),
   status: DS.attr('string'),
+  pendingPayment: DS.attr('boolean'),
 
   // Associations
   /* the individual line items of the invoice */
@@ -33,6 +34,10 @@ export default AbstractModel.extend(DateFormat, NumberFormat, {
 
   billDateAsTime: computed('billDate', function() {
     return this.dateToTime(get(this, 'billDate'));
+  }),
+
+  canTransact: computed('pendingPayment', 'remainingBalance', function() {
+    return this.get('remainingBalance') === 0 || this.get('pendingPayment');
   }),
 
   discountTotals: Ember.computed.mapBy('lineItemsByCategory', 'discount'),
