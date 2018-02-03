@@ -22,17 +22,14 @@ export default AbstractEditRoute.extend({
 
   afterModel(model) {
     let invoicing = this.get('invoicing');
-    return new Ember.RSVP.Promise(function(resolve, reject) {
-      let lineItems = model.get('lineItems');
-      let visit = model.get('visit');
-      if (!Ember.isEmpty(lineItems) && !Ember.isEmpty(visit)) {
-        return invoicing.reloadItems(lineItems, reject)
-          .then(() => invoicing.regenerateItems(model, visit))
-          .catch((err) => console.warn(err))
-          .then(resolve, reject);
-      }
-      return invoicing.reloadItems(lineItems, reject).then(resolve, reject);
-    });
+    let lineItems = model.get('lineItems');
+    let visit = model.get('visit');
+    if (!Ember.isEmpty(lineItems) && !Ember.isEmpty(visit)) {
+      return invoicing.reloadItems(lineItems)
+        .then(() => invoicing.regenerateItems(model, visit))
+        .catch((err) => console.warn(err));
+    }
+    return invoicing.reloadItems(lineItems);
   },
 
   getNewData() {

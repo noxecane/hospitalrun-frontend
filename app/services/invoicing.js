@@ -216,12 +216,13 @@ export default Service.extend({
     }
   },
 
-  reloadItems(lineItems, reject) {
+  reloadItems(lineItems) {
     return RSVP.all(lineItems.map((li) => li.reload()))
-      .then((items) => {
-        let promises = items.map((item) => item.get('details').map((detail) => detail.reload()));
-        return RSVP.all(flatten(promises)).catch(reject);
-      }, reject);
+      .then((items) => RSVP.all(
+        flatten(
+          items.map((item) => item.get('details')
+            .map((detail) => detail.reload())))))
+      .catch((err) => console.warn(err));
   },
 
   saveItems(lineItems) {
