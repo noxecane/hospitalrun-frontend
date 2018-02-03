@@ -1445,7 +1445,9 @@ export default {
       newDischargeReport: 'New Discharge Report',
       newOPDReport: 'New OPD Report',
       newProcedure: 'New Procedure',
-      newVitals: 'New Vitals'
+      newVitals: 'New Vitals',
+      viewPatient: 'View Patient',
+      queue: 'Queue'
     },
     labels: {
       appointment: 'Appointment',

@@ -1,0 +1,32 @@
+{{#item-listing paginationProps=paginationProps }}
+  <table class="table outpatient-list">
+    <thead>
+      <tr class="table-header">
+        <th>{{t 'labels.id'}}</th>
+        <th>{{t 'labels.name'}}</th>
+        <th>{{t 'patients.labels.sex'}}</th>
+        <th>{{t 'labels.age'}}</th>
+        <th>{{t 'visits.labels.visitType'}}</th>
+        <th>{{t 'visits.labels.checkInTime'}}</th>
+        <th>{{t 'visits.labels.examiner'}}</th>
+        <th>{{t 'labels.actions'}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each visits as |visit|}}
+        <tr {{action 'dequeue' visit}} class="clickable">
+          <td class="col-xs-1">{{visit.patient.displayPatientId}}</td>
+          <td class="col-xs-1">{{visit.patient.shortDisplayName}}</td>
+          <td class="col-xs-1">{{visit.patient.sex}}</td>
+          <td class="col-xs-1">{{visit.patient.shortAge}}</td>
+          <td class="col-xs-1">{{visit.visitType}}</td>
+          <td class="col-xs-1">{{date-format visit.startDate format="h:mm A"}}</td>
+          <td class="col-xs-1">{{visit.examiner}}</td>
+          <td class="col-xs-1">
+            <button class="btn btn-primary" {{action 'dequeue' visit  bubbles=false}}>{{t 'visits.buttons.viewPatient'}}</button>
+          </td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+{{/item-listing}}

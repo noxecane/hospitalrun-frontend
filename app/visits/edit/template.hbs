@@ -95,7 +95,14 @@
                   label=(t "visits.labels.finalDiagnosis")  list=diagnosisList
                   selection=model.primaryBillingDiagnosis hint=false
                 }}
-                <div class="col-sm-2 col-sm-offset-5 form-group">
+                <div class="col-sm-2 col-sm-offset-3 form-group">
+                  {{#if (not onQueue) }}
+                    <button class="btn btn-primary aligned" {{action "queue"}}>
+                      {{t "visits.buttons.queue"}}
+                    </button>
+                  {{/if}}
+                </div>
+                <div class="col-sm-2 form-group">
                   <button class="btn btn-primary aligned" {{action "showInvoice"}}>
                     {{t "visits.buttons.checkInvoice"}}
                   </button>

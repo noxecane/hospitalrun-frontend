@@ -94,6 +94,7 @@ Router.map(function() {
     this.route('operative-plan', { path: '/operative-plan/:operative-plan_id' });
     this.route('operation-report', { path: '/operation-report/:operation-report_id' });
     this.route('outpatient');
+    this.route('queue');
   });
 
   this.route('pricing', function() {

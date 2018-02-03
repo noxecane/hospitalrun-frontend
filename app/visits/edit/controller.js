@@ -371,6 +371,10 @@ export default AbstractEditController.extend(AddNewPatient, AllergyActions, Char
     }.bind(this));
   },
 
+  onQueue: function() {
+    return this.get('model.queue') === 'Doctor' && this.currentUserRole() !== 'Doctor';
+  }.property('model.queue'),
+
   actions: {
     addAllergy(newAllergy) {
       let patient = get(this, 'model.patient');
@@ -384,6 +388,11 @@ export default AbstractEditController.extend(AddNewPatient, AllergyActions, Char
           this.transitionToRoute('invoices.edit', invoice.get('id'));
         }
       });
+    },
+
+    queue() {
+      let visit = this.get('model');
+      visit.set('queue', 'Doctor');
     },
 
     addDiagnosis(newDiagnosis) {

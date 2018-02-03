@@ -74,6 +74,12 @@ export default Ember.Mixin.create({
           capability: 'add_patient'
         },
         {
+          title: 'Patient Queue',
+          iconClass: 'octicon-chevron-right',
+          route: 'patients.queue',
+          capability: 'add_vitals'
+        },
+        {
           title: 'Reports',
           iconClass: 'octicon-chevron-right',
           route: 'patients.reports',
