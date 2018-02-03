@@ -1,0 +1,41 @@
+.ts-range-input {
+  .outside .form-control[disabled] {
+    background-color: $red_lightest;
+  }
+
+  .inside .form-control[disabled] {
+    background-color: $green_lighter;
+  }
+
+  .addon-input {
+    display: flex;
+
+    .form-control {
+      flex: 1;
+      border-right-width: 0;
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    .addon {
+      flex: 0 0 100px;
+
+      border-top-right-radius: 3px;
+      border-bottom-right-radius: 3px;
+
+      width: 90px;
+      text-align: center;
+      line-height: 46px;
+
+      color: $white;
+    }
+  }
+
+  .outside .addon {
+    background-color: $red;
+  }
+
+  .inside .addon {
+    background-color: $green_light;
+  }
+}

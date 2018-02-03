@@ -1,0 +1,11 @@
+<div class="col-xs-3 ts-range-input">
+  <div class="form-input-group {{input-status isComplete value min max}}">
+    <label class="control-label">{{ label }}</label>
+    <div class="addon-input">
+      {{input value=value class="form-control" disabled=isComplete}}
+      {{#if value}}
+        <span class="addon">{{ min }} - {{ max }}</span>
+      {{/if}}
+    </div>
+  </div>
+</div>
