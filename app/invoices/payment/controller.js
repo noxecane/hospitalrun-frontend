@@ -18,7 +18,7 @@ export default AbstractEditController.extend(PatientSubmodule, {
   },
 
   paymentMethods: function() {
-    return SelectValues.selectValues(['Cash', 'P.O.S', 'Credit Card']);
+    return SelectValues.selectValues(['Cash', 'P.O.S', 'Credit Card', 'Transfer']);
   }.property(),
 
   currentPatient: function() {
