@@ -1466,7 +1466,7 @@ export default {
       patientToCheckIn: 'Patient To Check In',
       procedure: 'Procedure',
       procedureDate: 'Procedure Date',
-      reasonForVisit: 'Reason For Visit',
+      reasonForVisit: 'Presenting Complaints & Examination',
       reportType: 'Report type',
       status: 'Visit Status',
       statusAdmitted: 'Admitted',
