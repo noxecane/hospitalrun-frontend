@@ -425,8 +425,8 @@ export default {
   },
   dashboard: {
     needs_user_setup: 'We recommend that you setup a User account.',
-    standalone_welcome: '<h4>Thanks for downloading Lafiya</h4><p>You are running Lafiya in stand alone mode. This mode allows you to support multiple users on a single, desktop/laptop instance of Lafiya. This is ideal for:</p><ul><li>Evaluating Lafiya for an eventual server deployment.</li><li>Using the platform to support a clinic / facility where a single instance is sufficient.</li></ul><p>If you\'re considering a multi-device deployment of Lafiya, we\'re <a href="https://github.com/tsaron/lafiya/" target="_blank">working on features</a> that will allow you to "graduate" from this single instance into a traditional cloud / server-based deployment.</p>',
-    title: 'Welcome to Lafiya!'
+    standalone_welcome: '<h4>Thanks for downloading Curator</h4><p>You are running Curator in stand alone mode. This mode allows you to support multiple users on a single, desktop/laptop instance of Curator. This is ideal for:</p><ul><li>Evaluating Curator for an eventual server deployment.</li><li>Using the platform to support a clinic / facility where a single instance is sufficient.</li></ul><p>If you\'re considering a multi-device deployment of Curator, we\'re <a href="https://github.com/tsaron/lafiya/" target="_blank">working on features</a> that will allow you to "graduate" from this single instance into a traditional cloud / server-based deployment.</p>',
+    title: 'Welcome to Curator!'
   },
   dates: {
     'long': '{{years}} year {{months}} months {{days}} days',
@@ -1109,7 +1109,7 @@ export default {
     } }
   },
   navigation: {
-    about: 'About Lafiya',
+    about: 'About Curator',
     actions: {
       login: 'Login',
       logout: 'Logout',
