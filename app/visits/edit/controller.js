@@ -457,24 +457,18 @@ export default AbstractEditController.extend(AddNewPatient, AllergyActions, Char
     },
 
     editImaging(imaging) {
-      if (imaging.get('canEdit')) {
-        imaging.setProperties('returnToVisit', this.get('model.id'));
-      }
+      imaging.set('returnToVisit', this.get('model.id'));
       this.transitionToRoute('imaging.edit', imaging);
     },
 
     editLab(lab) {
-      if (lab.get('canEdit')) {
-        lab.setProperties('returnToVisit', this.get('model.id'));
-        this.transitionToRoute('labs.edit', lab);
-      }
+      lab.set('returnToVisit', this.get('model.id'));
+      this.transitionToRoute('labs.edit', lab);
     },
 
     editMedication(medication) {
-      if (medication.get('canEdit')) {
-        medication.set('returnToVisit', this.get('model.id'));
-        this.transitionToRoute('medication.edit', medication);
-      }
+      medication.set('returnToVisit', this.get('model.id'));
+      this.transitionToRoute('medication.edit', medication);
     },
 
     editOperativePlan(operativePlan) {

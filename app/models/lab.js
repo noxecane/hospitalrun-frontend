@@ -32,11 +32,6 @@ export default AbstractModel.extend(CanEditRequested, DateFormat, ResultValidati
     return this.dateToTime(get(this, 'requestedDate'));
   }),
 
-  // TODO: No one should be able to edit after completion
-  canEdit: function() {
-    return true;
-  }.property('status'),
-
   // Heamatology
   haematology_hb: DS.attr('number'),
   haematology_pcv: DS.attr('number'),
