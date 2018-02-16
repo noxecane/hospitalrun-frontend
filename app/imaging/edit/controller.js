@@ -5,7 +5,7 @@ import PatientSubmodule from 'hospitalrun/mixins/patient-submodule';
 
 export default AbstractEditController.extend(ChargeActions, PatientSubmodule, {
   imagingController: Ember.inject.controller('imaging'),
-
+  queueing: Ember.inject.service(),
   chargePricingCategory: 'Imaging',
   chargeRoute: 'imaging.charge',
   selectedImagingType: null,
@@ -101,6 +101,7 @@ export default AbstractEditController.extend(ChargeActions, PatientSubmodule, {
 
   afterUpdate(saveResponse, multipleRecords) {
     let i18n = this.get('i18n');
+    let queueing = this.get('queueing');
     this.updateLookupLists();
     let afterDialogAction,
       alertTitle,
@@ -108,6 +109,7 @@ export default AbstractEditController.extend(ChargeActions, PatientSubmodule, {
     if (this.get('model.status') === 'Completed') {
       alertTitle = i18n.t('imaging.alerts.completedTitle');
       alertMessage = i18n.t('imaging.alerts.completedMessage');
+      queueing.push(this.get('model.visit'), 'Doctor', 'imaging.edit', this.get('model.id'));
     } else {
       alertTitle = i18n.t('imaging.alerts.savedTitle');
       alertMessage = i18n.t('imaging.alerts.savedMessage');

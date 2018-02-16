@@ -23,6 +23,7 @@ export default AbstractEditController.extend(AddNewPatient, AllergyActions, Char
   visitsController: inject.controller('visits'),
   filesystem: inject.service(),
   invoicing: inject.service(),
+  queueing: inject.service(),
 
   additionalButtons: computed('model.status', function() {
     let buttonProps = {
@@ -372,7 +373,7 @@ export default AbstractEditController.extend(AddNewPatient, AllergyActions, Char
   },
 
   onQueue: function() {
-    return this.get('model.queue') === 'Doctor' && this.currentUserRole() !== 'Doctor';
+    return !!this.get('model.queue') && this.get('model.queue.role') !== this.currentUserRole();
   }.property('model.queue'),
 
   actions: {
@@ -390,9 +391,8 @@ export default AbstractEditController.extend(AddNewPatient, AllergyActions, Char
       });
     },
 
-    queue() {
-      let visit = this.get('model');
-      visit.set('queue', 'Doctor');
+    queue(role) {
+      this.get('queueing').push(this.get('model'), role);
     },
 
     addDiagnosis(newDiagnosis) {

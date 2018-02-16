@@ -5,6 +5,7 @@ import PatientSubmodule from 'hospitalrun/mixins/patient-submodule';
 
 export default AbstractEditController.extend(ChargeActions, PatientSubmodule, {
   labsController: Ember.inject.controller('labs'),
+  queueing: Ember.inject.service(),
   chargePricingCategory: 'Lab',
   chargeRoute: 'labs.charge',
   selectedLabType: null,
@@ -95,10 +96,12 @@ export default AbstractEditController.extend(ChargeActions, PatientSubmodule, {
 
   afterUpdate(saveResponse, multipleRecords) {
     let i18n = this.get('i18n');
+    let queueing = this.get('queueing');
     let afterDialogAction, alertMessage, alertTitle;
     if (this.get('model.status') === 'Completed') {
       alertTitle = i18n.t('labs.alerts.requestCompletedTitle');
       alertMessage = i18n.t('labs.alerts.requestCompletedMessage');
+      queueing.push(this.get('model.visit'), 'Doctor', 'labs.edit', this.get('model.id'));
     } else {
       alertTitle = i18n.t('labs.alerts.requestSavedTitle');
       alertMessage = i18n.t('labs.alerts.requestSavedMessage');

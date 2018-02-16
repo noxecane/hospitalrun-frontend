@@ -1447,7 +1447,8 @@ export default {
       newProcedure: 'New Procedure',
       newVitals: 'New Vitals',
       viewPatient: 'View Patient',
-      queue: 'Queue'
+      nurseQueue: 'Send to Nurse',
+      doctorQueue: 'Send to Doctor'
     },
     labels: {
       appointment: 'Appointment',

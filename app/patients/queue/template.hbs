@@ -13,7 +13,7 @@
       </tr>
     </thead>
     <tbody>
-      {{#each visits as |visit|}}
+      {{#each sortedVisits as |visit|}}
         <tr {{action 'dequeue' visit}} class="clickable">
           <td class="col-xs-1">{{visit.patient.displayPatientId}}</td>
           <td class="col-xs-1">{{visit.patient.shortDisplayName}}</td>

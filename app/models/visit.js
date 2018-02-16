@@ -55,7 +55,7 @@ export default AbstractModel.extend({
   reasonForVisit: DS.attr('string'),
   startDate: DS.attr('date'),
   status: DS.attr('string'),
-  queue: DS.attr('string'),
+  queue: DS.attr(),
   visitType: DS.attr(),
 
   // Associations
