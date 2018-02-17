@@ -3,6 +3,7 @@ import AllergyActions from 'hospitalrun/mixins/allergy-actions';
 import BloodTypes from 'hospitalrun/mixins/blood-types';
 import DiagnosisActions from 'hospitalrun/mixins/diagnosis-actions';
 import Ember from 'ember';
+import HMOPatient from 'hospitalrun/mixins/hmo-patient';
 import PatientId from 'hospitalrun/mixins/patient-id';
 import PatientNotes from 'hospitalrun/mixins/patient-notes';
 import ReturnTo from 'hospitalrun/mixins/return-to';
@@ -16,7 +17,7 @@ const {
   isEmpty
 } = Ember;
 
-export default AbstractEditController.extend(AllergyActions, BloodTypes, DiagnosisActions, ReturnTo, UserSession, PatientId, PatientNotes, PatientVisits, {
+export default AbstractEditController.extend(AllergyActions, BloodTypes, DiagnosisActions, ReturnTo, HMOPatient, UserSession, PatientId, PatientNotes, PatientVisits, {
 
   canAddAppointment: function() {
     return this.currentUserCan('add_appointment');
@@ -87,7 +88,9 @@ export default AbstractEditController.extend(AllergyActions, BloodTypes, Diagnos
     let i18n = get(this, 'i18n');
     let types = [
       'Charity',
-      'Private'
+      'Private',
+      'Managed'
+      ];
     ];
     return types.map((type) => {
       return i18n.t(`patients.labels.patientType${type}`);
@@ -116,6 +119,8 @@ export default AbstractEditController.extend(AllergyActions, BloodTypes, Diagnos
   pricingProfiles: Ember.computed.map('patientController.pricingProfiles', SelectValues.selectObjectMap),
   sexList: Ember.computed.alias('patientController.sexList'),
   statusList: Ember.computed.alias('patientController.statusList'),
+
+  dataUri: null,
 
   haveAdditionalContacts: function() {
     let additionalContacts = this.get('model.additionalContacts');
@@ -202,6 +207,14 @@ export default AbstractEditController.extend(AllergyActions, BloodTypes, Diagnos
       diagnoses.addObject(newDiagnosis);
       this.send('update', true);
       this.send('closeModal');
+    },
+     
+    didSnap(dataUri) {
+      this.set('dataUri',  dataUri);
+    },
+ 
+    didError(err) {
+      console.error(err);
     },
 
     returnToPatient() {
