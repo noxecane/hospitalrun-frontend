@@ -68,6 +68,10 @@ export default AbstractModel.extend(DOBDays, PatientName, {
     return this.convertDOBToText(dob);
   }),
 
+  isManaged: computed('patientType', function() {
+    return get(this, 'patientType') === 'Managed';
+  }),
+
   displayAddress: computed('address', 'address2', 'address3', 'address4', function() {
     let addressFields = this.getProperties('address', 'address2', 'address3', 'address4');
     let displayAddress = '';

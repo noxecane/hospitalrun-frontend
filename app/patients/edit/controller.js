@@ -119,7 +119,12 @@ export default AbstractEditController.extend(AllergyActions, BloodTypes, Diagnos
   sexList: Ember.computed.alias('patientController.sexList'),
   statusList: Ember.computed.alias('patientController.statusList'),
 
-  dataUri: null,
+  isImage: true,
+
+  isManaged: function() {
+    console.warn(this.get('model.patientType'));
+    return this.get('model.patientType') === 'Managed';
+  }.property('model.patientType'),
 
   haveAdditionalContacts: function() {
     let additionalContacts = this.get('model.additionalContacts');
@@ -206,14 +211,6 @@ export default AbstractEditController.extend(AllergyActions, BloodTypes, Diagnos
       diagnoses.addObject(newDiagnosis);
       this.send('update', true);
       this.send('closeModal');
-    },
-     
-    didSnap(dataUri) {
-      this.set('dataUri',  dataUri);
-    },
- 
-    didError(err) {
-      console.error(err);
     },
 
     returnToPatient() {

@@ -14,9 +14,6 @@ module.exports = function(defaults) {
       options: {
         exclude: ['**/service-worker.js']
       }
-    },
-    'ember-webcam': {
-      enableFlashFallback: false
     }
   });
 
