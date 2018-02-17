@@ -90,7 +90,6 @@ export default AbstractEditController.extend(AllergyActions, BloodTypes, Diagnos
       'Charity',
       'Private',
       'Managed'
-      ];
     ];
     return types.map((type) => {
       return i18n.t(`patients.labels.patientType${type}`);
