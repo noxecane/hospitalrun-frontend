@@ -118,13 +118,18 @@
                   <div>
                     {{ext-radio content=patientTypes value=model.patientType showInline=true }}
                   </div>
-                  {{#if isManaged}}
-                    {{em-select prompt=" " property="hmoType" label='HMO Type' content=hmoTypes class="form-input-group"}}
-                  {{/if}}
                 </div>
+                {{#if model.isManaged}}
+                 {{em-select prompt=" " property="hmoType" label='HMO Type' content=hmoTypes class="form-input-group"}}
+               {{/if}}
               </div>
               <div class="col-xs-12 col-sm-6">
-                {{take-photo photoFile=model.profilePic isImage=model.isImage}}
+                  {{#ember-webcam
+                     didSnap=(action 'didSnap')
+                     didError=(action 'didError')
+                     as |camera|}}
+                    <button {{action camera.snap}}>Take Snapshot </button>
+                  {{/ember-webcam}}
                 {{select-or-typeahead property="status" label=(t 'patients.labels.status') list=statusList selection=model.status class="form-input-group" }}
                 {{em-input property="externalPatientId" label=(t 'patients.labels.externalPatientId') class="form-input-group"}}
                 {{em-select
