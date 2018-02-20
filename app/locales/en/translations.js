@@ -1263,7 +1263,6 @@ export default {
       patientType: 'Patient Type',
       patientTypeCharity: 'Charity',
       patientTypePrivate: 'Private',
-      patientTypeManaged: 'Managed',
       phone: 'Phone',
       placeOfBirth: 'Place Of Birth',
       primaryDiagnosis: 'Primary Diagnoses',

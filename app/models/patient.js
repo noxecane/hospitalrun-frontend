@@ -60,9 +60,6 @@ export default AbstractModel.extend(DOBDays, PatientName, {
   payments: DS.hasMany('payment', { async: true }),
   paymentProfile: DS.belongsTo('price-profile', { async: false }),
 
-  hmoType : DS.attr('string'),
-  profilePic: DS.attr(),
-
   age: computed('dateOfBirth', function() {
     let dob = get(this, 'dateOfBirth');
     return this.convertDOBToText(dob);
