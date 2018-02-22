@@ -43,6 +43,7 @@ export default AbstractModel.extend(DOBDays, PatientName, {
   notes: DS.attr('string'),
   otherIncome: DS.attr('string'),
   patientType: DS.attr('string'),
+  hmoName: DS.attr('string'),
   parent: DS.attr('string'),
   phone: DS.attr('string'),
   placeOfBirth: DS.attr('string'),

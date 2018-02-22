@@ -119,6 +119,16 @@
                     {{ext-radio content=patientTypes value=model.patientType showInline=true }}
                   </div>
                 </div>
+                {{#if isManaged}}
+                  {{em-select
+                    prompt="--Name of HMO--"
+                    label=(t 'labels.hmo')
+                    property="hmoName"
+                    content=hmoNames
+                    selection=model.hmoName
+                    class="form-input-group"
+                  }}
+               {{/if}}
               </div>
               <div class="col-xs-12 col-sm-6">
                 {{select-or-typeahead property="status" label=(t 'patients.labels.status') list=statusList selection=model.status class="form-input-group" }}

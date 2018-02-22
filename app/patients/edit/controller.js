@@ -87,16 +87,22 @@ export default AbstractEditController.extend(AllergyActions, BloodTypes, Diagnos
     let i18n = get(this, 'i18n');
     let types = [
       'Charity',
-      'Private'
+      'Private',
+      'Managed'
     ];
     return types.map((type) => {
       return i18n.t(`patients.labels.patientType${type}`);
     });
   }),
 
+  isManaged: Ember.computed.equal('model.patientType.string', 'Managed'),
+  rawHMONames: Ember.computed.alias('hmolist.names'),
+  hmoNames: Ember.computed.map('rawHMONames', SelectValues.selectValuesMap),
+
   config: Ember.inject.service(),
   filesystem: Ember.inject.service(),
   database: Ember.inject.service(),
+  hmolist: Ember.inject.service(),
   patientController: Ember.inject.controller('patients'),
 
   addressOptions: Ember.computed.alias('patientController.addressOptions'),
