@@ -59,6 +59,7 @@ export default AbstractModel.extend(DOBDays, PatientName, {
   operationReports: DS.hasMany('operation-report', { async: true }),
   operativePlans: DS.hasMany('operative-plan', { async: true }),
   payments: DS.hasMany('payment', { async: true }),
+  passport: DS.belongsTo('photo', { async: true }),
   paymentProfile: DS.belongsTo('price-profile', { async: false }),
 
   age: computed('dateOfBirth', function() {

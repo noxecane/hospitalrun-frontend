@@ -131,6 +131,11 @@
                {{/if}}
               </div>
               <div class="col-xs-12 col-sm-6">
+                <div class="form-input-group">
+                  <button class="btn btn-primary" {{action "showAddPassport"}}>
+                    {{t "patients.buttons.addPassport"}}
+                  </button>
+                </div>
                 {{select-or-typeahead property="status" label=(t 'patients.labels.status') list=statusList selection=model.status class="form-input-group" }}
                 {{em-input property="externalPatientId" label=(t 'patients.labels.externalPatientId') class="form-input-group"}}
                 {{em-select

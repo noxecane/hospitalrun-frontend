@@ -1222,6 +1222,7 @@ export default {
       addExpense: 'Add Expense',
       addFamilyMember: 'Add Family Member',
       addOperativePlan: 'Add Operative Plan',
+      addPassport: 'Take Picture',
       backToPatients: 'Back to Patient List',
       download: 'Download',
       editOperativePlan: 'Current Operative Plan',

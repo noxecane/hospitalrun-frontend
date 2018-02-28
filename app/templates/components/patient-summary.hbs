@@ -4,7 +4,13 @@
     <label class="ps-info-label">{{t 'labels.id'}}</label>
     <span class="ps-info-data">{{patient.displayPatientId}}</span>
   </div>
-
+  {{#if patient.passport}}
+    <div class="ps-info-group">
+      <div class="patient-passport thumbnail" {{action "editPhoto" patient.passport}}>
+        {{photo-display photo=patient.passport }}
+      </div>
+    </div>
+  {{/if}}
   <div class="ps-info-group patient-name">
     <label class="ps-info-label">{{t 'labels.name'}}</label>
     <span class="ps-info-data">{{patient.displayName}}</span>

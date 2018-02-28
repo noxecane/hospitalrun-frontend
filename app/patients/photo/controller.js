@@ -5,7 +5,6 @@ import { translationMacro as t } from 'ember-i18n';
 const { computed, get, inject, isEmpty, RSVP, set } = Ember;
 
 export default AbstractEditController.extend({
-  addAction: 'addPhoto',
   editTitle: t('patients.titles.editPhoto'),
   fileRequiredMessage: t('patients.messages.photoFileRequired'),
   modelName: 'photo',
@@ -53,6 +52,7 @@ export default AbstractEditController.extend({
   afterUpdate(model) {
     let isNew = get(this, 'newModel');
     let editController = get(model, 'editController');
+    let finishAction = get(model, 'finishAction');
     if (isNew) {
       let photoFile = get(model, 'photoFile');
       let saveToDir = get(model, 'saveToDir');
@@ -66,7 +66,7 @@ export default AbstractEditController.extend({
           url: fileEntry.toURL()
         });
         model.save().then(() => {
-          editController.send(get(this, 'addAction'), model);
+          editController.send(finishAction, model);
         }).catch((err) => {
           throw err;
         });

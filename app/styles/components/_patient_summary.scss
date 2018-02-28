@@ -7,6 +7,16 @@
   .ps-info-group {
     margin-bottom: 5px;
 
+    .patient-passport {
+      position: absolute;
+      top: 55px;
+      right: -10px;
+
+      .img-responsive {
+        width: 150px;
+      }
+    }
+
     &.patient-id {
       position: absolute;
       top: -10px;

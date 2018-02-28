@@ -222,6 +222,11 @@ export default AbstractEditController.extend(AllergyActions, BloodTypes, Diagnos
       this.send('closeModal');
     },
 
+    setPassport(savedPhotoRecord) {
+      let patient = this.get('model');
+      patient.set('passport', savedPhotoRecord);
+    },
+
     appointmentDeleted(deletedAppointment) {
       let appointments = this.get('model.appointments');
       appointments.removeObject(deletedAppointment);
@@ -384,7 +389,19 @@ export default AbstractEditController.extend(AllergyActions, BloodTypes, Diagnos
         saveToDir: `${this.get('model.id')}/photos/`
       });
       newPatientPhoto.set('editController', this);
+      newPatientPhoto.set('finishAction', 'addPhoto');
       this.send('openModal', 'patients.photo', newPatientPhoto);
+    },
+
+    showAddPassport() {
+      let newPassport = this.get('store').createRecord('photo', {
+        patient: this.get('model'),
+        caption: 'Passport',
+        saveToDir: `${this.get('model.id')}/photos/`
+      });
+      newPassport.set('editController', this);
+      newPassport.set('finishAction', 'setPassport');
+      this.send('openModal', 'patients.photo', newPassport);
     },
 
     showAddPatientNote(model) {
