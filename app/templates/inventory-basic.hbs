@@ -5,7 +5,8 @@
       {{input class="form-control test-item-id" value=model.friendlyId type="text" disabled=true }}
     </div>
   {{/unless}}
-  {{em-input property="name" label=(t 'labels.name') class="required  col-sm-6 test-inv-name"}}
+  {{em-input property="name" label=(t 'labels.name') class="required  col-sm-3 test-inv-name"}}
+  {{em-input property="genericName" label=(t 'inventory.labels.genericName') class="col-sm-3"}}
   {{inventory/rank-select property="rank"}}
   {{#unless model.isNew}}
     <div class="form-group col-sm-2">

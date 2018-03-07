@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import funk from 'hospitalrun/utils/funk';
 import moment from 'moment';
 import uuid from 'npm:uuid';
 
@@ -7,12 +8,6 @@ const {
   RSVP,
   inject
 } = Ember;
-
-function flatten(arr) {
-  let newArr = [];
-  arr.forEach((ar) => newArr.push(...ar));
-  return newArr;
-}
 
 export default Service.extend({
   store: inject.service(),
@@ -219,7 +214,7 @@ export default Service.extend({
   reloadItems(lineItems) {
     return RSVP.all(lineItems.map((li) => li.reload()))
       .then((items) => RSVP.all(
-        flatten(
+        funk.flatten(
           items.map((item) => item.get('details')
             .map((detail) => detail.reload())))))
       .catch((err) => console.warn(err));

@@ -6,6 +6,7 @@ import ModalHelper from 'hospitalrun/mixins/modal-helper';
 import moment from 'moment';
 import NumberFormat from 'hospitalrun/mixins/number-format';
 import SelectValues from 'hospitalrun/utils/select-values';
+import funk from 'hospitalrun/utils/funk';
 export default AbstractReportController.extend(LocationName, ModalHelper, NumberFormat, InventoryAdjustmentTypes, {
   inventoryController: Ember.inject.controller('inventory'),
   effectiveDate: null,
@@ -41,6 +42,11 @@ export default AbstractReportController.extend(LocationName, ModalHelper, Number
         label: i18n.t('inventory.labels.name'),
         include: true,
         property: 'inventoryItem.name'
+      },
+      genericName: {
+        label: i18n.t('inventory.labels.genericName'),
+        include: true,
+        property: 'inventoryItem.genericName'
       },
       transactionType: {
         label: i18n.t('inventory.labels.adjustmentType'),
@@ -814,302 +820,384 @@ export default AbstractReportController.extend(LocationName, ModalHelper, Number
     }.bind(this));
   },
 
+  _preprocessRequest({ locations }, purchases, request) {
+    let {
+      adjustPurchases,
+      deliveryLocation,
+      deliveryAisle,
+      locationsAffected,
+      purchasesAffected,
+      quantity,
+      transactionType
+    } = request;
+    let increment = (
+      transactionType === 'Adjustment (Add)'
+      || transactionType === 'Return'
+    );
+
+    if (adjustPurchases && !Ember.isEmpty(purchasesAffected) && !Ember.isEmpty(purchases)) {
+      purchasesAffected.forEach(({ id, quantity }) =>
+        this._adjustPurchase(purchases, id, quantity, increment));
+    } else if (transactionType === 'Transfer') {
+      let locationName = this.getDisplayLocationName(deliveryLocation, deliveryAisle);
+      this._adjustLocation(locations, locationName, quantity, true);
+    }
+
+    locationsAffected.forEach(({ name, quantity }) =>
+      this._adjustLocation(locations, name, quantity, increment));
+  },
+
+  _preprocessPurchase(row, purchase) {
+    if (purchase.giftInKind === true) {
+      row.giftInKind = 'Y';
+    }
+    if (!Ember.isEmpty(purchase.vendor)) {
+      if (!row.vendors.includes(purchase.vendor)) {
+        row.vendors.push(purchase.vendor);
+      }
+    }
+    purchase.calculatedQuantity = purchase.originalQuantity;
+    let locationName = this.getDisplayLocationName(purchase.location, purchase.aisleLocation);
+    this._adjustLocation(row.locations, locationName, purchase.originalQuantity, true);
+  },
+
+  _byLocationReport({ locations, giftInKind }, item, purchases) {
+    let locationSummary = [];
+    locations.forEach((location) => {
+      let { quantity, name } = location;
+      let locationToUpdate = locationSummary.findBy('name', this._getWarehouseLocationName(name));
+      if (Ember.isEmpty(locationToUpdate)) {
+        locationToUpdate = Ember.copy(location);
+        locationToUpdate.items = {};
+        locationSummary.push(locationToUpdate);
+      } else {
+        locationToUpdate.quantity += this._getValidNumber(quantity);
+      }
+      let { unitCost } = this._calculateCosts(purchases, {
+        quantity: 0,
+        totalCost: 0
+      });
+      locationToUpdate.items[item.id] = {
+        item,
+        quantity: this._getValidNumber(quantity),
+        giftInKind,
+        totalCost: (this._getValidNumber(unitCost) * this._getValidNumber(quantity)),
+        unitCost: this._getValidNumber(unitCost)
+      };
+    });
+  },
+
+  _daysLeftReport(row, item, requests) {
+    let dateDiff = moment(this.get('endDate')).diff(this.get('startDate'), 'days');
+    if (!Ember.isEmpty(requests) && this._hasIncludedLocation(row.locations)) {
+      let consumedQuantity = requests.reduce(
+        (qty, { transactionType, quantity }) =>
+          transactionType === 'Fulfillment' ? qty += this._getValidNumber(quantity) : qty
+        , 0);
+      row.quantity = this._getValidNumber(item.quantity);
+      if (consumedQuantity > 0) {
+        row.consumedPerDay = this._numberFormat(consumedQuantity / dateDiff, true);
+        row.daysLeft = this._numberFormat(row.quantity / row.consumedPerDay);
+      } else if (consumedQuantity === 0) {
+        row.consumedPerDay = '0';
+        row.daysLeft = '?';
+      } else {
+        row.consumedPerDay = `?${consumedQuantity}`;
+        row.daysLeft = '?';
+      }
+      this._addReportRow(row);
+    }
+  },
+
+  _generalReport({ giftInKind, inventoryItem }, reportType, requests) {
+    let summaryQuantity = 0;
+    let summaryCost = 0;
+    let i18n = this.get('i18n');
+    if (!Ember.isEmpty(requests)) {
+      requests.forEach((request) => {
+        if (this._includeTransaction(reportType, request.transactionType)
+            && this._hasIncludedLocation(request.locationsAffected)) {
+          let deliveryLocation = this.getDisplayLocationName(request.deliveryLocation, request.deliveryAisle);
+          let locations = request.locationsAffected.map((location) => {
+            if (reportType === 'detailedTransfer') {
+              return {
+                name: i18n.t('inventory.reports.rows.transfer2', {
+                  source: location.name,
+                  target: deliveryLocation
+                }).toString()
+              };
+            } else {
+              return {
+                name: i18n.t('inventory.reports.rows.transfer1', {
+                  quantity: this._getValidNumber(request.quantity),
+                  location: location.name
+                }).toString()
+              };
+            }
+          });
+          let reportRow = {
+            date: moment(new Date(request.dateCompleted)).format('l'),
+            expenseAccount: request.expenseAccount,
+            giftInKind,
+            inventoryItem,
+            quantity: request.quantity,
+            transactionType: request.transactionType,
+            locations,
+            unitCost: request.costPerUnit,
+            totalCost: this._getValidNumber(request.quantity) * this._getValidNumber(request.costPerUnit)
+          };
+          if (reportType === 'detailedExpense' || reportType === 'summaryExpense') {
+            this._updateExpenseMap(request, reportRow);
+          } else {
+            this._addReportRow(reportRow);
+            summaryQuantity += this._getValidNumber(request.quantity);
+            summaryCost += this._getValidNumber(reportRow.totalCost);
+          }
+        }
+      });
+      if (reportType !== 'detailedExpense' && reportType !== 'summaryExpense') {
+        this._addTotalsRow(i18n.t('inventory.reports.rows.subtotal'), summaryCost, summaryQuantity);
+      }
+    }
+    return [summaryCost, summaryQuantity];
+  },
+
+  _summaryReport(row, reportType, requests) {
+    let summaryQuantity = 0;
+    let summaryCost = 0;
+    if (!Ember.isEmpty(requests) && this._hasIncludedLocation(row.locations)) {
+      row.quantity = requests.reduce((qty, request) => {
+        if (this._includeTransaction(reportType, request.transactionType)) {
+          summaryCost += this._getValidNumber(request.quantity) * this._getValidNumber(request.costPerUnit);
+          return qty += this._getValidNumber(request.quantity);
+        } else {
+          return qty;
+        }
+      }, 0);
+      summaryQuantity = row.quantity;
+      if (row.quantity > 0) {
+        row.totalCost = summaryCost;
+        row.unitCost = (summaryCost / row.quantity);
+        this._addReportRow(row);
+      }
+    }
+    return [summaryCost, summaryQuantity];
+  },
+
+  _detailedPurchaseReport({ inventoryItem }, purchases) {
+    let summaryQuantity = 0;
+    let summaryCost = 0;
+    if (!Ember.isEmpty(purchases)) {
+      purchases.forEach((purchase) => {
+        let costPerUnit = this._getValidNumber(purchase.purchaseCost) / this._getValidNumber(purchase.originalQuantity);
+        if (this._includeLocation(purchase.location)) {
+          this._addReportRow({
+            date: moment(new Date(purchase.dateReceived)).format('l'),
+            giftInKind: purchase.giftInKind === true ? 'Y' : 'N',
+            inventoryItem,
+            quantity: purchase.originalQuantity,
+            unitCost: costPerUnit,
+            totalCost: purchase.purchaseCost,
+            locations: [{
+              name: this.getDisplayLocationName(purchase.location, purchase.aisleLocation)
+            }]
+          });
+          summaryCost += this._getValidNumber(purchase.purchaseCost);
+          summaryQuantity += this._getValidNumber(purchase.originalQuantity);
+        }
+      });
+      this._addTotalsRow(this.get('i18n').t('inventory.reports.rows.subtotal'), summaryCost, summaryQuantity);
+    }
+    return [summaryCost, summaryQuantity];
+  },
+
+  _summaryPurchaseReport(row, purchases) {
+    let summaryQuantity = 0;
+    let summaryCost = 0;
+    if (!Ember.isEmpty(purchases)) {
+      row.locations = [];
+      row.quantity = purchases.reduce((qty, purchase) => {
+        summaryCost += this._getValidNumber(purchase.purchaseCost);
+        let locationName = this.getDisplayLocationName(purchase.location, purchase.aisleLocation);
+        if (!row.locations.findBy('name', locationName)) {
+          row.locations.push({
+            name: this.getDisplayLocationName(purchase.location, purchase.aisleLocation)
+          });
+        }
+        return qty += this._getValidNumber(purchase.originalQuantity);
+      }, 0);
+      summaryQuantity = row.quantity;
+      if (this._hasIncludedLocation(row.locations)) {
+        row.unitCost = (summaryCost / row.quantity);
+        row.totalCost = summaryCost;
+        this._addReportRow(row);
+      }
+    }
+    return [summaryCost, summaryQuantity];
+  },
+
+  _valuationReport(row, purchases) {
+    let summaryQuantity = 0;
+    let summaryCost = 0;
+    if (!Ember.isEmpty(purchases) && this._hasIncludedLocation(row.locations)) {
+      this._calculateCosts(purchases, row);
+      summaryCost = row.totalCost;
+      summaryQuantity = row.quantity;
+      this._addReportRow(row);
+    }
+    return [summaryCost, summaryQuantity];
+  },
+
+  _genInventoryData(queryParams) {
+    let errorLabel = this.get('i18n').t('inventory.reports.rows.errInFindPur');
+    let onError = (err) => {
+      this._notifyReportError(errorLabel + err);
+    };
+
+    return this._findInventoryItemsByRequest(queryParams, {}).then((inventory) => {
+      return this._findInventoryItemsByPurchase(queryParams, inventory).then((inventory) => {
+        let cleanInventory = Object.keys(inventory)
+          .filter((k) => !Ember.isEmpty(inventory[k]))
+          .map((k) => inventory[k]);
+        let [meds, others] = funk.splitBy(cleanInventory, (i) => Ember.isEmpty(Ember.get(i, 'genericName')));
+        let genericGroup = funk.groupBy(meds, 'genericName');
+        let medGroups = Object.keys(genericGroup).map((g) => genericGroup[g]);
+        return [medGroups, others];
+      }, onError);
+    }, onError);
+  },
+
+  _genMedReport(reportType, meds) {
+    let genericCost = 0;
+    let genericQuantity = 0;
+    let genericName = Ember.get(meds[0], 'genericName');
+    meds.forEach((med) => {
+      let [cost, units] = this._genItemReport(reportType, med);
+      genericCost += cost;
+      genericQuantity += units;
+    });
+    if (genericQuantity !== 0 && genericCost !== 0) {
+      this._addTotalsRow(
+        this.get('i18n').t('inventory.reports.rows.genericSubtotal', { genericName }),
+        genericCost, genericQuantity);
+    }
+    return [genericCost, genericQuantity];
+  },
+
+  _genItemReport(reportType, item) {
+    let {
+      purchaseObjects: purchases,
+      requestObjects: requests
+    } = item;
+
+    let row = {
+      giftInKind: 'N',
+      inventoryItem: item,
+      quantity: 0,
+      unitCost: 0,
+      totalCost: 0,
+      locations: [],
+      vendors: []
+    };
+
+    if (!Ember.isEmpty(purchases)) {
+      purchases.forEach((purchase) => this._preprocessPurchase(row, purchase));
+    }
+    if (!Ember.isEmpty(requests)) {
+      requests.forEach((request) => this._preprocessRequest(row, purchases, request));
+    }
+
+    let totals = [0, 0];
+
+    switch (reportType) {
+      case 'byLocation': {
+        this._byLocationReport(row, item, purchases);
+        break;
+      }
+      case 'daysLeft': {
+        this._daysLeftReport(row, item, requests);
+        break;
+      }
+      case 'detailedAdjustment':
+      case 'detailedTransfer':
+      case 'detailedUsage':
+      case 'detailedExpense':
+      case 'summaryExpense': {
+        totals = this._generalReport(row, reportType, requests);
+        break;
+      }
+      case 'summaryTransfer':
+      case 'summaryUsage': {
+        totals = this._summaryReport(row, reportType, requests);
+        break;
+      }
+      case 'detailedPurchase': {
+        totals = this._detailedPurchaseReport(row, purchases);
+        break;
+      }
+      case 'summaryPurchase': {
+        totals = this._summaryPurchaseReport(row, purchases);
+        break;
+      }
+      case 'valuation': {
+        totals = this._valuationReport(row, purchases);
+        break;
+      }
+    }
+    return totals;
+  },
+
   _generateInventoryReport() {
+    // initial reset
     this.set('grandCost', 0);
     this.set('grandQuantity', 0);
     this.set('locationSummary', []);
-    let dateDiff;
-    let locationSummary = this.get('locationSummary');
-    let reportType = this.get('reportType');
-    let reportTimes = this._getDateQueryParams();
+
     let i18n = this.get('i18n');
-    if (reportType === 'daysLeft') {
-      let endDate = this.get('endDate');
-      let startDate = this.get('startDate');
-      if (Ember.isEmpty(endDate) || Ember.isEmpty(startDate)) {
-        this.closeProgressModal();
-        return;
-      } else {
-        dateDiff = moment(endDate).diff(startDate, 'days');
-      }
+    let reportType = this.get('reportType');
+
+    // Optimization: Prevent Query for daysLeft report if params
+    // don't exist
+    if (reportType === 'daysLeft'
+        && Ember.isEmpty(this.get('endDate'))
+        || Ember.isEmpty(this.get('startDate'))) {
+      this.closeProgressModal();
+      return;
     }
-    this._findInventoryItemsByRequest(reportTimes, {}).then(function(inventoryMap) {
-      this._findInventoryItemsByPurchase(reportTimes, inventoryMap).then(function(inventoryMap) {
-        // Loop through each inventory item, looking at the requests and purchases to determine
-        // state of inventory at effective date
-        Object.keys(inventoryMap).forEach(function(key) {
-          if (Ember.isEmpty(inventoryMap[key])) {
-            // If the inventory item has been deleted, ignore it.
-            return;
-          }
-          let item = inventoryMap[key];
-          let inventoryPurchases = item.purchaseObjects;
-          let inventoryRequests = item.requestObjects;
-          let row = {
-            giftInKind: 'N',
-            inventoryItem: item,
-            quantity: 0,
-            unitCost: 0,
-            totalCost: 0,
-            locations: [],
-            vendors: []
-          };
-          if (!Ember.isEmpty(inventoryPurchases)) {
-            // Setup intial locations for an inventory item
-            inventoryPurchases.forEach(function(purchase) {
-              let locationName = this.getDisplayLocationName(purchase.location, purchase.aisleLocation);
-              let purchaseQuantity = purchase.originalQuantity;
-              purchase.calculatedQuantity = purchaseQuantity;
-              if (purchase.giftInKind === true) {
-                row.giftInKind = 'Y';
-              }
-              if (!Ember.isEmpty(purchase.vendor)) {
-                if (!row.vendors.includes(purchase.vendor)) {
-                  row.vendors.push(purchase.vendor);
-                }
-              }
-              this._adjustLocation(row.locations, locationName, purchaseQuantity, true);
-            }.bind(this));
-          }
 
-          if (!Ember.isEmpty(inventoryRequests)) {
-            inventoryRequests.forEach(function(request) {
-              let { adjustPurchases, transactionType } = request;
-              let increment = false;
-              let locations = request.locationsAffected;
-              let purchases = request.purchasesAffected;
-
-              increment = (transactionType === 'Adjustment (Add)' || transactionType === 'Return');
-              if (adjustPurchases) {
-                if (!Ember.isEmpty(purchases) && !Ember.isEmpty(inventoryPurchases)) {
-                  // Loop through purchase(s) on request and adjust corresponding inventory purchases
-                  purchases.forEach(function(purchaseInfo) {
-                    this._adjustPurchase(inventoryPurchases, purchaseInfo.id, purchaseInfo.quantity, increment);
-                  }.bind(this));
-                }
-              } else if (transactionType === 'Transfer') {
-                // Increment the delivery location
-                let locationName = this.getDisplayLocationName(request.deliveryLocation, request.deliveryAisle);
-                this._adjustLocation(row.locations, locationName, request.quantity, true);
-              }
-              // Loop through locations to adjust location quantity
-              locations.forEach(function(locationInfo) {
-                this._adjustLocation(row.locations, locationInfo.name, locationInfo.quantity, increment);
-              }.bind(this));
-            }.bind(this));
-          }
-
-          let summaryCost = 0;
-          let summaryQuantity = 0;
-
-          switch (reportType) {
-            case 'byLocation': {
-              row.locations.forEach(function(location) {
-                let locationToUpdate = locationSummary.findBy('name', this._getWarehouseLocationName((location.name)));
-                if (Ember.isEmpty(locationToUpdate)) {
-                  locationToUpdate = Ember.copy(location);
-                  locationToUpdate.items = {};
-                  locationSummary.push(locationToUpdate);
-                } else {
-                  locationToUpdate.quantity += this._getValidNumber(location.quantity);
-                }
-                let costData = this._calculateCosts(inventoryPurchases, {
-                  quantity: 0,
-                  totalCost: 0
-                });
-                locationToUpdate.items[item.id] = {
-                  item,
-                  quantity: this._getValidNumber(location.quantity),
-                  giftInKind: row.giftInKind,
-                  totalCost: (this._getValidNumber(costData.unitCost) * this._getValidNumber(location.quantity)),
-                  unitCost: this._getValidNumber(costData.unitCost)
-                };
-              }.bind(this));
-              break;
-            }
-            case 'daysLeft': {
-              if (!Ember.isEmpty(inventoryRequests) && this._hasIncludedLocation(row.locations)) {
-                let consumedQuantity = inventoryRequests.reduce(function(previousValue, request) {
-                  if (request.transactionType === 'Fulfillment') {
-                    return previousValue += this._getValidNumber(request.quantity);
-                  } else {
-                    return previousValue;
-                  }
-                }.bind(this), 0);
-                row.quantity = this._getValidNumber(item.quantity);
-                if (consumedQuantity > 0) {
-                  row.consumedPerDay = this._numberFormat((consumedQuantity / dateDiff), true);
-                  row.daysLeft = this._numberFormat(row.quantity / row.consumedPerDay);
-                } else {
-                  if (consumedQuantity === 0) {
-                    row.consumedPerDay = '0';
-                  } else {
-                    row.consumedPerDay = `?${consumedQuantity}`;
-                  }
-                  row.daysLeft = '?';
-                }
-                this._addReportRow(row);
-              }
-              break;
-            }
-            case 'detailedAdjustment':
-            case 'detailedTransfer':
-            case 'detailedUsage':
-            case 'detailedExpense':
-            case 'summaryExpense': {
-              if (!Ember.isEmpty(inventoryRequests)) {
-                inventoryRequests.forEach(function(request) {
-                  if (this._includeTransaction(reportType, request.transactionType) && this._hasIncludedLocation(request.locationsAffected)) {
-                    let deliveryLocation = this.getDisplayLocationName(request.deliveryLocation, request.deliveryAisle);
-                    let locations = [];
-                    let num = this._getValidNumber(request.quantity);
-                    let totalCost = (this._getValidNumber(request.quantity) * this._getValidNumber(request.costPerUnit));
-                    locations = request.locationsAffected.map(function(location) {
-                      if (reportType === 'detailedTransfer') {
-                        return {
-                          name: i18n.t('inventory.reports.rows.transfer2', { source: location.name, target: deliveryLocation }).toString()
-                        };
-                      } else {
-                        return {
-                          name: i18n.t('inventory.reports.rows.transfer1', { quantity: num, location: location.name }).toString()
-                        };
-                      }
-                    }.bind(this));
-                    let reportRow = {
-                      date: moment(new Date(request.dateCompleted)).format('l'),
-                      expenseAccount: request.expenseAccount,
-                      giftInKind: row.giftInKind,
-                      inventoryItem: row.inventoryItem,
-                      quantity: request.quantity,
-                      transactionType: request.transactionType,
-                      locations,
-                      unitCost: request.costPerUnit,
-                      totalCost
-                    };
-                    if (reportType === 'detailedExpense' || reportType === 'summaryExpense') {
-                      this._updateExpenseMap(request, reportRow);
-                    } else {
-                      this._addReportRow(reportRow);
-                      summaryQuantity += this._getValidNumber(request.quantity);
-                      summaryCost += this._getValidNumber(totalCost);
-                    }
-                  }
-                }.bind(this));
-                if (reportType !== 'detailedExpense' && reportType !== 'summaryExpense') {
-                  this._addTotalsRow(i18n.t('inventory.reports.rows.subtotal'), summaryCost, summaryQuantity);
-                  this.incrementProperty('grandCost', summaryCost);
-                  this.incrementProperty('grandQuantity', summaryQuantity);
-                }
-              }
-              break;
-            }
-            case 'summaryTransfer':
-            case 'summaryUsage': {
-              if (!Ember.isEmpty(inventoryRequests) && this._hasIncludedLocation(row.locations)) {
-                row.quantity = inventoryRequests.reduce(function(previousValue, request) {
-                  if (this._includeTransaction(reportType, request.transactionType)) {
-                    let totalCost = (this._getValidNumber(request.quantity) * this._getValidNumber(request.costPerUnit));
-                    summaryCost += totalCost;
-                    return previousValue += this._getValidNumber(request.quantity);
-                  } else {
-                    return previousValue;
-                  }
-                }.bind(this), 0);
-                if (row.quantity > 0) {
-                  row.totalCost = summaryCost;
-                  row.unitCost = (summaryCost / row.quantity);
-                  this._addReportRow(row);
-                  this.incrementProperty('grandCost', summaryCost);
-                  this.incrementProperty('grandQuantity', row.quantity);
-                }
-              }
-              break;
-            }
-            case 'detailedPurchase': {
-              if (!Ember.isEmpty(inventoryPurchases)) {
-                inventoryPurchases.forEach(function(purchase) {
-                  if (this._includeLocation(purchase.location)) {
-                    let giftInKind = 'N';
-                    if (purchase.giftInKind === true) {
-                      giftInKind = 'Y';
-                    }
-                    this._addReportRow({
-                      date: moment(new Date(purchase.dateReceived)).format('l'),
-                      giftInKind,
-                      inventoryItem: row.inventoryItem,
-                      quantity: purchase.originalQuantity,
-                      unitCost: purchase.costPerUnit,
-                      totalCost: purchase.purchaseCost,
-                      locations: [{
-                        name: this.getDisplayLocationName(purchase.location, purchase.aisleLocation)
-                      }]
-                    });
-                    summaryCost += this._getValidNumber(purchase.purchaseCost);
-                    summaryQuantity += this._getValidNumber(purchase.originalQuantity);
-                  }
-                }.bind(this));
-                this._addTotalsRow(i18n.t('inventory.reports.rows.subtotal'), summaryCost, summaryQuantity);
-                this.incrementProperty('grandCost', summaryCost);
-                this.incrementProperty('grandQuantity', summaryQuantity);
-              }
-              break;
-            }
-            case 'summaryPurchase': {
-              if (!Ember.isEmpty(inventoryPurchases)) {
-                row.locations = [];
-                row.quantity = inventoryPurchases.reduce(function(previousValue, purchase) {
-                  summaryCost += this._getValidNumber(purchase.purchaseCost);
-                  let locationName = this.getDisplayLocationName(purchase.location, purchase.aisleLocation);
-                  if (!row.locations.findBy('name', locationName)) {
-                    row.locations.push({
-                      name: this.getDisplayLocationName(purchase.location, purchase.aisleLocation)
-                    });
-                  }
-                  return previousValue += this._getValidNumber(purchase.originalQuantity);
-                }.bind(this), 0);
-                if (this._hasIncludedLocation(row.locations)) {
-                  row.unitCost = (summaryCost / row.quantity);
-                  row.totalCost = summaryCost;
-                  this._addReportRow(row);
-                  this.incrementProperty('grandCost', summaryCost);
-                  this.incrementProperty('grandQuantity', row.quantity);
-                }
-              }
-              break;
-            }
-            case 'valuation': {
-              if (!Ember.isEmpty(inventoryPurchases) && this._hasIncludedLocation(row.locations)) {
-                this._calculateCosts(inventoryPurchases, row);
-                this.incrementProperty('grandCost', this._getValidNumber(row.totalCost));
-                this.incrementProperty('grandQuantity', this._getValidNumber(row.quantity));
-                this._addReportRow(row);
-              }
-              break;
-            }
-          }
-        }.bind(this));
-        switch (reportType) {
-          case 'detailedExpense':
-          case 'summaryExpense': {
-            this._finishExpenseReport(reportType);
-            break;
-          }
-          case 'byLocation': {
-            this._finishLocationReport();
-            this._addTotalsRow(i18n.t('inventory.reports.rows.total'), this.get('grandCost'), this.get('grandQuantity'));
-            break;
-          }
-          default: {
-            this._addTotalsRow(i18n.t('inventory.reports.rows.total'), this.get('grandCost'), this.get('grandQuantity'));
-          }
+    this._genInventoryData(this._getDateQueryParams()).then(([medGroups, others]) => {
+      let medTotals = medGroups.map((item) => this._genMedReport(reportType, item));
+      let otherTotals = others.map((item) => this._genItemReport(reportType, item));
+      medTotals.forEach(([cost, units]) => {
+        this.incrementProperty('grandCost', cost);
+        this.incrementProperty('grandQuantity', units);
+      });
+      otherTotals.forEach(([cost, units]) => {
+        this.incrementProperty('grandCost', cost);
+        this.incrementProperty('grandQuantity', units);
+      });
+      // finish
+      switch (reportType) {
+        case 'detailedExpense':
+        case 'summaryExpense': {
+          this._finishExpenseReport(reportType);
+          break;
         }
-        this._finishReport();
-      }.bind(this), function(err) {
-        this._notifyReportError(i18n.t('inventory.reports.rows.errInFindPur') + err);
-      }.bind(this));
-    }.bind(this), function(err) {
-      this._notifyReportError(i18n.t('inventory.reports.rows.errInFindPur') + err);
-    }.bind(this));
+        case 'byLocation': {
+          this._finishLocationReport();
+          this._addTotalsRow(i18n.t('inventory.reports.rows.total'), this.get('grandCost'), this.get('grandQuantity'));
+          break;
+        }
+        default: {
+          this._addTotalsRow(i18n.t('inventory.reports.rows.total'), this.get('grandCost'), this.get('grandQuantity'));
+        }
+      }
+      this._finishReport();
+      this.closeProgressModal();
+    }).catch((err) => {
+      console.error(err);
+      this.closeProgressModal();
+    });
   },
 
   _getDateQueryParams() {

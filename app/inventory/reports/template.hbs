@@ -66,6 +66,7 @@
         </div>
         <div class="row">
           <div class="col-xs-1"></div>
+          {{em-checkbox label=reportColumns.genericName.label property="reportColumns.genericName.include" class="col-xs-2"}}
           {{em-checkbox label=reportColumns.vendor.label property="reportColumns.vendor.include" class="col-xs-2"}}
           {{#if includeExpenseAccount}}
             {{em-checkbox label=reportColumns.expenseAccount.label property="reportColumns.expenseAccount.include" class="col-xs-2"}}

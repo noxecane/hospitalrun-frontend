@@ -24,6 +24,7 @@ export default AbstractModel.extend(LocationName, {
   inventoryType: DS.attr('string'),
   keywords: DS.attr(),
   name: DS.attr('string'),
+  genericName: DS.attr('string'),
   price: DS.attr('number'),
   quantity: DS.attr('number'),
   rank: DS.attr('string'),
