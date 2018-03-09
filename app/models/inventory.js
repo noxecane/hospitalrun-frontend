@@ -69,25 +69,13 @@ export default AbstractModel.extend(LocationName, {
     distributionUnit: {
       presence: true
     },
-    purchaseCost: {
-      numericality: validateIfNewItem
-    },
     name: {
       presence: true
-    },
-    quantity: {
-      numericality: {
-        validateIfNewItem,
-        greaterThanOrEqualTo: 0
-      }
     },
     price: {
       numericality: {
         allowBlank: true
       }
-    },
-    originalQuantity: {
-      presence: validateIfNewItem
     },
     reorderPoint: {
       numericality: {
@@ -96,9 +84,6 @@ export default AbstractModel.extend(LocationName, {
     },
     inventoryType: {
       presence: true
-    },
-    vendor: {
-      presence: validateIfNewItem
     }
   },
 

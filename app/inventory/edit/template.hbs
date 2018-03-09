@@ -1,10 +1,7 @@
 {{#edit-panel editPanelProps=editPanelProps}}
   {{#em-form model=model submitButton=false }}
     {{partial 'inventory-basic'}}
-    {{#if model.isNew}}
-      <h3>{{t 'inventory.labels.purchaseInfo'}}</h3>
-      {{partial 'inv-purchase'}}
-    {{else}}
+    {{#unless model.isNew}}
       {{#if quantityDiscrepency}}
         <div class="alert alert-danger alert-dismissible" role="alert">
           <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true" class="octicon octicon-x"></span><span class="sr-only">{{t 'buttons.close'}}</span></button>
@@ -55,7 +52,7 @@
           </tr>
         {{/each}}
       </table>
-    {{/if}}
+    {{/unless}}
     {{#unless model.isNew}}
       <h3>{{t 'inventory.labels.locations'}}</h3>
       <table class="table">
