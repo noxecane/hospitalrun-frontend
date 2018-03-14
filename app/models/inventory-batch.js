@@ -12,7 +12,7 @@ export default AbstractModel.extend(Discount, {
   },
 
   purchaseCost: Ember.computed('costPerUnit', 'quantity', function() {
-    return this._purchaseCost(this);
+    return this._numberFormat(this._purchaseCost(this), true);
   }),
 
   validations: {

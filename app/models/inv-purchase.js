@@ -37,7 +37,7 @@ let InventoryPurchaseItem = AbstractModel.extend(LocationName, NumberFormat, Dis
   quantityGroups: DS.attr({ defaultValue: defaultQuantityGroups }),
 
   purchaseCost: computed('costPerUnit', 'originalQuantity', function() {
-    return this._purchaseCost(this, 'originalQuantity');
+    return this._numberFormat(this._purchaseCost(this, 'originalQuantity'), true);
   }),
 
   validations: {
