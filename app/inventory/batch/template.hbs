@@ -36,7 +36,7 @@
               <p class="form-control-static inventory-distribution-unit">{{model.inventoryItem.distributionUnit}}</p>
             {{/if}}
           </div>
-          {{number-input property="purchaseCost" label=(t 'inventory.labels.purchaseCost') class="col-sm-2 required test-inv-cost"}}
+          {{number-input property="costPerUnit" label=(t 'inventory.labels.costPerUnit') class="col-sm-2 required test-inv-cost"}}
         </div>
         <div class="row">
           {{em-input property="vendorItemNo" label=(t 'inventory.labels.vendorItemNumber') class="col-sm-4"}}
@@ -59,7 +59,7 @@
         <tr class="table-header">
           <th>{{t 'inventory.labels.name'}}</th>
           <th>{{t 'labels.quantity'}}</th>
-          <th>{{t 'inventory.labels.cost'}}</th>
+          <th>{{t 'inventory.labels.costPerUnit'}}</th>
           <th>{{t 'inventory.labels.itemNumber'}}</th>
           <th>{{t 'inventory.labels.serialNumber'}}</th>
           <th>{{t 'inventory.labels.expirationDate'}}</th>
@@ -80,7 +80,7 @@
             </td>
             <td class="col-sm-2">
               <div class="form-group">
-                {{input class="form-control" value=invoiceItem.purchaseCost }}
+                {{input class="form-control" value=invoiceItem.costPerUnit }}
               </div>
             </td>
             <td class="col-sm-2">

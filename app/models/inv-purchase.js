@@ -3,6 +3,7 @@ import DS from 'ember-data';
 import Ember from 'ember';
 import LocationName from 'hospitalrun/mixins/location-name';
 import NumberFormat from 'hospitalrun/mixins/number-format';
+import Discount from 'hospitalrun/mixins/discount';
 
 const { computed } = Ember;
 
@@ -16,8 +17,8 @@ function defaultQuantityGroups() {
  * items to be shown as inventory items since the pouchdb adapter does a
  * retrieve for keys starting with 'inventory' to fetch inventory items.
  */
-let InventoryPurchaseItem = AbstractModel.extend(LocationName, NumberFormat, {
-  purchaseCost: DS.attr('number'),
+let InventoryPurchaseItem = AbstractModel.extend(LocationName, NumberFormat, Discount, {
+  costPerUnit: DS.attr('number'),
   lotNumber: DS.attr('string'),
   dateReceived: DS.attr('date'),
   originalQuantity: DS.attr('number'),
@@ -34,17 +35,12 @@ let InventoryPurchaseItem = AbstractModel.extend(LocationName, NumberFormat, {
   invoiceNo: DS.attr('string'),
   quantityGroups: DS.attr({ defaultValue: defaultQuantityGroups }),
 
-  costPerUnit: computed('purchaseCost', 'originalQuantity', function() {
-    let purchaseCost = this.get('purchaseCost');
-    let quantity = parseInt(this.get('originalQuantity'));
-    if (Ember.isEmpty(purchaseCost) || Ember.isEmpty(quantity) || purchaseCost === 0 || quantity === 0) {
-      return 0;
-    }
-    return this._numberFormat(purchaseCost / quantity, true);
+  purchaseCost: computed('costPerUnit', 'originalQuantity', function() {
+    return this._purchaseCost(this, 'originalQuantity');
   }),
 
   validations: {
-    purchaseCost: {
+    costPerUnit: {
       numericality: true
     },
     originalQuantity: {

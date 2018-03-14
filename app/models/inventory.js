@@ -7,13 +7,13 @@ import { rankToMultiplier, getCondition } from 'hospitalrun/utils/item-condition
 
 const { get, set } = Ember;
 
-let validateIfNewItem = {
-  if: function validateNewItem(object) {
-    let skipSavePurchase = get(object, 'skipSavePurchase');
-    // Only validate on new items and only if we are saving a purchase.
-    return (!skipSavePurchase && get(object, 'isNew'));
-  }
-};
+// let validateIfNewItem = {
+//   if: function validateNewItem(object) {
+//     let skipSavePurchase = get(object, 'skipSavePurchase');
+//     // Only validate on new items and only if we are saving a purchase.
+//     return (!skipSavePurchase && get(object, 'isNew'));
+//   }
+// };
 
 export default AbstractModel.extend(LocationName, {
   // Attributes

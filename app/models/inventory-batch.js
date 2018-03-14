@@ -1,14 +1,19 @@
 import AbstractModel from 'hospitalrun/models/abstract';
 import Ember from 'ember';
+import Discount from 'hospitalrun/mixins/discount';
 
 /**
  * Model to represent a request for inventory items.
  */
-export default AbstractModel.extend({
+export default AbstractModel.extend(Discount, {
   haveInvoiceItems() {
     let invoiceItems = this.get('invoiceItems');
     return !Ember.isEmpty(invoiceItems);
   },
+
+  purchaseCost: Ember.computed('costPerUnit', 'quantity', function() {
+    return this._purchaseCost(this);
+  }),
 
   validations: {
     dateReceived: {
@@ -21,7 +26,7 @@ export default AbstractModel.extend({
         }
       }
     },
-    purchaseCost: {
+    costPerUnit: {
       numericality: {
         greaterThan: 0,
         messages: {

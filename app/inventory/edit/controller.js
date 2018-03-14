@@ -191,11 +191,13 @@ export default AbstractEditController.extend(FriendlyId, InventoryLocations, Inv
     }
   },
 
+  // TODO: Remove this code as it is for adding purchase while inventory is
+  // being created.
   _completeBeforeUpdate(friendlyId) {
     let promises = [];
     let model = this.get('model');
     let newPurchase = model.getProperties('aisleLocation', 'dateReceived',
-      'purchaseCost', 'lotNumber', 'expirationDate', 'giftInKind',
+      'costPerUnit', 'lotNumber', 'expirationDate', 'giftInKind',
       'invoiceNo', 'location', 'originalQuantity', 'quantityGroups', 'vendor', 'vendorItemNo');
     let quantity = this.get('model.originalQuantity');
     if (!Ember.isEmpty(quantity)) {

@@ -4,10 +4,11 @@ import InventoryAdjustmentTypes from 'hospitalrun/mixins/inventory-adjustment-ty
 import LocationName from 'hospitalrun/mixins/location-name';
 import ModalHelper from 'hospitalrun/mixins/modal-helper';
 import moment from 'moment';
+import Discount from 'hospitalrun/mixins/discount';
 import NumberFormat from 'hospitalrun/mixins/number-format';
 import SelectValues from 'hospitalrun/utils/select-values';
 import funk from 'hospitalrun/utils/funk';
-export default AbstractReportController.extend(LocationName, ModalHelper, NumberFormat, InventoryAdjustmentTypes, {
+export default AbstractReportController.extend(LocationName, ModalHelper, NumberFormat, InventoryAdjustmentTypes, Discount, {
   inventoryController: Ember.inject.controller('inventory'),
   effectiveDate: null,
   endDate: null,
@@ -396,12 +397,10 @@ export default AbstractReportController.extend(LocationName, ModalHelper, Number
   _calculateUsage(inventoryPurchases, row) {
     // Calculate quantity and cost per unit for the row
     if (!Ember.isEmpty(inventoryPurchases)) {
-      inventoryPurchases.forEach(function(purchase) {
-        let costPerUnit = this._calculateCostPerUnit(purchase);
-        let quantity = purchase.calculatedQuantity;
+      inventoryPurchases.forEach((purchase) => {
         row.quantity -= purchase.calculatedQuantity;
-        row.totalCost -= (quantity * costPerUnit);
-      }.bind(this));
+        row.totalCost -= this._purchaseCost(purchase, 'calculatedQuantity');
+      });
     }
     if (row.totalCost === 0 || row.quantity === 0) {
       row.unitCost = 0;
@@ -409,15 +408,6 @@ export default AbstractReportController.extend(LocationName, ModalHelper, Number
       row.unitCost = (row.totalCost / row.quantity);
     }
     return row;
-  },
-
-  _calculateCostPerUnit(purchase) {
-    let { purchaseCost } = purchase;
-    let quantity = parseInt(purchase.originalQuantity);
-    if (Ember.isEmpty(purchaseCost) || Ember.isEmpty(quantity)) {
-      return 0;
-    }
-    return Number((purchaseCost / quantity).toFixed(2));
   },
 
   _findInventoryItems(queryParams, view, inventoryList, childName) {
@@ -659,9 +649,10 @@ export default AbstractReportController.extend(LocationName, ModalHelper, Number
             let item = inventoryMap[key];
 
             if (!Ember.isEmpty(item.purchaseObjects)) {
-              item.purchaseObjects.forEach(function(purchase) {
-                purchaseSummary[item.inventoryType] = this._getValidNumber(purchaseSummary[item.inventoryType]) + this._getValidNumber(purchase.purchaseCost);
-              }.bind(this));
+              item.purchaseObjects.forEach((purchase) => {
+                purchaseSummary[item.inventoryType] = this._getValidNumber(purchaseSummary[item.inventoryType])
+                  + this._purchaseCost(purchase, 'originalQuantity');
+              });
             }
             if (!Ember.isEmpty(item.requestObjects)) {
               item.requestObjects.forEach(function(request) {
@@ -989,20 +980,19 @@ export default AbstractReportController.extend(LocationName, ModalHelper, Number
     let summaryCost = 0;
     if (!Ember.isEmpty(purchases)) {
       purchases.forEach((purchase) => {
-        let costPerUnit = this._getValidNumber(purchase.purchaseCost) / this._getValidNumber(purchase.originalQuantity);
         if (this._includeLocation(purchase.location)) {
           this._addReportRow({
             date: moment(new Date(purchase.dateReceived)).format('l'),
             giftInKind: purchase.giftInKind === true ? 'Y' : 'N',
             inventoryItem,
             quantity: purchase.originalQuantity,
-            unitCost: costPerUnit,
-            totalCost: purchase.purchaseCost,
+            unitCost: purchase.costPerUnit,
+            totalCost: this._purchaseCost(purchase, 'originalQuantity'),
             locations: [{
               name: this.getDisplayLocationName(purchase.location, purchase.aisleLocation)
             }]
           });
-          summaryCost += this._getValidNumber(purchase.purchaseCost);
+          summaryCost += this._purchaseCost(purchase, 'originalQuantity');
           summaryQuantity += this._getValidNumber(purchase.originalQuantity);
         }
       });
@@ -1017,7 +1007,7 @@ export default AbstractReportController.extend(LocationName, ModalHelper, Number
     if (!Ember.isEmpty(purchases)) {
       row.locations = [];
       row.quantity = purchases.reduce((qty, purchase) => {
-        summaryCost += this._getValidNumber(purchase.purchaseCost);
+        summaryCost += this._purchaseCost(purchase, 'originalQuantity');
         let locationName = this.getDisplayLocationName(purchase.location, purchase.aisleLocation);
         if (!row.locations.findBy('name', locationName)) {
           row.locations.push({

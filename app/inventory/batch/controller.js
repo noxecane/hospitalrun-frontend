@@ -1,9 +1,10 @@
 import AbstractEditController from 'hospitalrun/controllers/abstract-edit-controller';
 import InventoryId from 'hospitalrun/mixins/inventory-id';
 import InventoryLocations from 'hospitalrun/mixins/inventory-locations';
+import Discount from 'hospitalrun/mixins/discount';
 import Ember from 'ember';
 import { translationMacro as t } from 'ember-i18n';
-export default AbstractEditController.extend(InventoryId, InventoryLocations, {
+export default AbstractEditController.extend(InventoryId, InventoryLocations, Discount, {
   doingUpdate: false,
   inventoryController: Ember.inject.controller('inventory'),
   inventoryItems: null,
@@ -14,7 +15,7 @@ export default AbstractEditController.extend(InventoryId, InventoryLocations, {
     'expirationDate',
     'inventoryItem',
     'lotNumber',
-    'purchaseCost',
+    'costPerUnit',
     'quantity',
     'vendorItemNo'
   ],
@@ -56,8 +57,8 @@ export default AbstractEditController.extend(InventoryId, InventoryLocations, {
     let invoiceItems = this.get('model.invoiceItems');
     let total = 0;
     if (!Ember.isEmpty('invoiceItems')) {
-      total = invoiceItems.reduce(function(previousValue, item) {
-        return previousValue + Number(item.get('purchaseCost'));
+      total = invoiceItems.reduce((cost, item) => {
+        return cost + this._purchaseCost(item);
       }, total);
     }
     let purchaseCost = this.get('model.purchaseCost');
@@ -65,7 +66,10 @@ export default AbstractEditController.extend(InventoryId, InventoryLocations, {
       total += Number(purchaseCost);
     }
     return total;
-  }.property('model.invoiceItems.[].purchaseCost', 'model.isValid', 'model.purchaseCost'),
+  }.property(
+    'model.invoiceItems.[].costPerUnit', 'model.isValid',
+    'model.costPerUnit'
+  ),
 
   updateButtonText: t('inventory.labels.save'),
 
@@ -86,10 +90,10 @@ export default AbstractEditController.extend(InventoryId, InventoryLocations, {
   _addInventoryItem() {
     let model = this.get('model');
     let inventoryItemTypeAhead = this.get('model.inventoryItemTypeAhead');
-    let purchaseCost = this.get('model.purchaseCost');
+    let costPerUnit = this.get('model.costPerUnit');
     let quantity = this.get('model.quantity');
     return model.validate().then(function() {
-      if (this.get('model.isValid') && !Ember.isEmpty(inventoryItemTypeAhead) && !Ember.isEmpty(quantity) && !Ember.isEmpty(purchaseCost)) {
+      if (this.get('model.isValid') && !Ember.isEmpty(inventoryItemTypeAhead) && !Ember.isEmpty(quantity) && !Ember.isEmpty(costPerUnit)) {
         if (this._haveValidInventoryItem()) {
           this._addInvoiceItem();
         } else {
@@ -114,7 +118,7 @@ export default AbstractEditController.extend(InventoryId, InventoryLocations, {
     model.set('inventoryItem');
     model.set('inventoryItemTypeAhead');
     model.set('lotNumber');
-    model.set('purchaseCost');
+    model.set('costPerUnit');
     model.set('quantity');
     model.set('selectedInventoryItem');
     model.set('vendorItemNo');

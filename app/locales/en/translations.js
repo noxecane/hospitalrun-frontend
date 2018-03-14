@@ -750,7 +750,7 @@ export default {
         expensesFor: 'Expenses For: ',
         noAccount: '(No Account)',
         subtotal: 'Subtotal: ',
-        genericSubtotal: '{{genericName}} Subtotal',
+        genericSubtotal: '{{genericName}} Subtotal: ',
         subtotalFor: 'Subtotal for {{category}} - {{account}}: ',
         total: 'Total: ',
         totalFor: 'Total for {{var}}: ',
