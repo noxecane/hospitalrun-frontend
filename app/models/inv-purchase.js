@@ -19,6 +19,7 @@ function defaultQuantityGroups() {
  */
 let InventoryPurchaseItem = AbstractModel.extend(LocationName, NumberFormat, Discount, {
   costPerUnit: DS.attr('number'),
+  discount: DS.attr('number'),
   lotNumber: DS.attr('string'),
   dateReceived: DS.attr('date'),
   originalQuantity: DS.attr('number'),

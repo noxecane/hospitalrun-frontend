@@ -814,6 +814,7 @@ export default {
     department: 'Department',
     description: 'Description',
     discount: 'Discount',
+    discountPercentage: 'Discount(%)',
     displayName: 'Display Name',
     docRead: 'Docs Read',
     docWritten: 'Docs Written',
