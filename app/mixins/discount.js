@@ -1,7 +1,6 @@
 import Ember from 'ember';
-import NumberFormat from 'hospitalrun/mixins/number-format';
 
-export default Ember.Mixin.create(NumberFormat, {
+export default Ember.Mixin.create({
   _purchaseCost(item, quantityName = 'quantity') {
     let costPerUnit = parseFloat(Ember.get(item, 'costPerUnit'));
     let quantity = parseInt(Ember.get(item, quantityName));

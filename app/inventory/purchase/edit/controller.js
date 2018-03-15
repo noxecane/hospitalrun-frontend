@@ -1,8 +1,9 @@
 import AbstractEditController from 'hospitalrun/controllers/abstract-edit-controller';
 import Ember from 'ember';
+import PaymentMethod from 'hospitalrun/mixins/payment-method';
 import UnitTypes from 'hospitalrun/mixins/unit-types';
 
-export default AbstractEditController.extend(UnitTypes, {
+export default AbstractEditController.extend(UnitTypes, PaymentMethod, {
   inventoryController: Ember.inject.controller('inventory'),
   cancelAction: 'closeModal',
 

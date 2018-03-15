@@ -74,6 +74,10 @@
           {{#if includeTransactionType}}
             {{em-checkbox label=reportColumns.transactionType.label property="reportColumns.transactionType.include" class="col-xs-2"}}
           {{/if}}
+          {{#if includePayment}}
+            {{em-checkbox label=reportColumns.paymentMethod.label property="reportColumns.paymentMethod.include" class="col-xs-2"}}
+            {{em-checkbox label=reportColumns.paymentInfo.label property="reportColumns.paymentInfo.include" class="col-xs-2"}}
+          {{/if}}
         </div>
       {{/if}}
 

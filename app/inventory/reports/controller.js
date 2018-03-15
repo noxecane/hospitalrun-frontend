@@ -136,6 +136,16 @@ export default AbstractReportController.extend(LocationName, ModalHelper, Number
         property: 'locations',
         format: '_addAisleColumn'
       },
+      paymentMethod: {
+        label: i18n.t('billing.labels.paymentMethod'),
+        include: false,
+        property: 'paymentMethod'
+      },
+      paymentInfo: {
+        label: i18n.t('billing.labels.paymentInfo'),
+        include: false,
+        property: 'paymentInfo'
+      },
       vendor: {
         label: i18n.t('inventory.labels.vendor'),
         include: false,
@@ -204,7 +214,19 @@ export default AbstractReportController.extend(LocationName, ModalHelper, Number
       this.set('reportColumns.date.include', false);
       return false;
     }
+  }.property('reportType'),
 
+  includePayment: function() {
+    let reportType = this.get('reportType');
+    if (reportType === 'detailedPurchase') {
+      this.set('reportColumns.paymentMethod.include', true);
+      this.set('reportColumns.paymentInfo.include', true);
+      return true;
+    } else {
+      this.set('reportColumns.paymentMethod.include', false);
+      this.set('reportColumns.paymentInfo.include', false);
+      return false;
+    }
   }.property('reportType'),
 
   includeDaysLeft: function() {
@@ -987,6 +1009,8 @@ export default AbstractReportController.extend(LocationName, ModalHelper, Number
             inventoryItem,
             quantity: purchase.originalQuantity,
             unitCost: purchase.costPerUnit,
+            paymentMethod: purchase.paymentMethod,
+            paymentInfo: purchase.paymentInfo,
             totalCost: this._purchaseCost(purchase, 'originalQuantity'),
             locations: [{
               name: this.getDisplayLocationName(purchase.location, purchase.aisleLocation)
