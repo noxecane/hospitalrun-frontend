@@ -19,6 +19,13 @@
   {{date-picker property="expirationDate" label=(t 'inventory.labels.expirationDate') minDate="now" class="col-sm-4"}}
 </div>
 <div class="row">
+  {{em-select class="col-sm-4 required form-input-group" label=(t 'billing.labels.paymentMethod') property="paymentMethod"
+    selected="model.paymentMethod" content=paymentMethods prompt=""}}
+  {{#if model.needsPaymentInfo}}
+    {{em-input property="paymentInfo" label=(t 'billing.labels.paymentInfo') class="col-sm-6 required form-input-group"}}
+  {{/if}}
+</div>
+<div class="row">
   {{select-or-typeahead property="vendor" label=(t 'inventory.labels.vendor') list=vendorList selection=model.vendor className="col-sm-6 required test-vendor"}}
   {{em-input property="vendorItemNo" label=(t 'inventory.labels.vendorItemNumber') class="col-sm-6"}}
 </div>
