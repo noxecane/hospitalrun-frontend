@@ -16,6 +16,7 @@ export default AbstractEditController.extend(InventoryId, InventoryLocations, Di
     'inventoryItem',
     'lotNumber',
     'costPerUnit',
+    'discount',
     'quantity',
     'vendorItemNo'
   ],
@@ -67,7 +68,8 @@ export default AbstractEditController.extend(InventoryId, InventoryLocations, Di
     }
     return total;
   }.property(
-    'model.invoiceItems.[].costPerUnit', 'model.isValid',
+    'model.discount',
+    'model.isValid',
     'model.costPerUnit'
   ),
 
@@ -93,7 +95,8 @@ export default AbstractEditController.extend(InventoryId, InventoryLocations, Di
     let costPerUnit = this.get('model.costPerUnit');
     let quantity = this.get('model.quantity');
     return model.validate().then(function() {
-      if (this.get('model.isValid') && !Ember.isEmpty(inventoryItemTypeAhead) && !Ember.isEmpty(quantity) && !Ember.isEmpty(costPerUnit)) {
+      if (this.get('model.isValid') && !Ember.isEmpty(inventoryItemTypeAhead)
+        && !Ember.isEmpty(quantity) && !Ember.isEmpty(costPerUnit)) {
         if (this._haveValidInventoryItem()) {
           this._addInvoiceItem();
         } else {
@@ -119,6 +122,7 @@ export default AbstractEditController.extend(InventoryId, InventoryLocations, Di
     model.set('inventoryItemTypeAhead');
     model.set('lotNumber');
     model.set('costPerUnit');
+    model.set('discount');
     model.set('quantity');
     model.set('selectedInventoryItem');
     model.set('vendorItemNo');

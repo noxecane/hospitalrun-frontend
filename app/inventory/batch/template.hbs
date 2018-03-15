@@ -22,7 +22,7 @@
       <div class="panel-body">
         <div class="row">
           {{inventory-typeahead
-            class="col-sm-7 required test-inv-item"
+            class="col-sm-5 required test-inv-item"
             property="inventoryItemTypeAhead"
             label=(t 'inventory.labels.inventoryItem')
             content=inventoryList
@@ -37,6 +37,7 @@
             {{/if}}
           </div>
           {{number-input property="costPerUnit" label=(t 'inventory.labels.costPerUnit') class="col-sm-2 required test-inv-cost"}}
+          {{number-input property="discount" label=(t 'labels.discount') class="col-sm-2 test-inv-quantity"}}
         </div>
         <div class="row">
           {{em-input property="vendorItemNo" label=(t 'inventory.labels.vendorItemNumber') class="col-sm-4"}}
@@ -60,6 +61,7 @@
           <th>{{t 'inventory.labels.name'}}</th>
           <th>{{t 'labels.quantity'}}</th>
           <th>{{t 'inventory.labels.costPerUnit'}}</th>
+          <th>{{t 'labels.discountPercentage'}}</th>
           <th>{{t 'inventory.labels.itemNumber'}}</th>
           <th>{{t 'inventory.labels.serialNumber'}}</th>
           <th>{{t 'inventory.labels.expirationDate'}}</th>
@@ -67,36 +69,14 @@
         </tr>
         {{#each model.invoiceItems as |invoiceItem|}}
           <tr>
-            <td class="col-sm-2">
-              {{invoiceItem.inventoryItem.name}}
-            </td>
-            <td class="col-sm-2">
-              <div class="input-group">
-                {{input class="form-control" value=invoiceItem.quantity }}
-                <span class="input-group-addon">
-                  {{invoiceItem.inventoryItem.distributionUnit}}
-                </span>
-              </div>
-            </td>
-            <td class="col-sm-2">
-              <div class="form-group">
-                {{input class="form-control" value=invoiceItem.costPerUnit }}
-              </div>
-            </td>
-            <td class="col-sm-2">
-              <div class="form-group">
-                {{input class="form-control" value=invoiceItem.vendorItemNo }}
-              </div>
-            </td>
-            <td class="col-sm-2">
-              <div class="form-group">
-                {{input class="form-control" value=invoiceItem.lotNumber }}
-              </div>
-            </td>
-            <td class="col-sm-2">
-              {{date-picker property="expirationDate" minDate="now" model=invoiceItem }}
-            </td>
-            <td class="col-sm-1">
+            <td>{{invoiceItem.inventoryItem.name}}</td>
+            <td>{{invoiceItem.quantity}} {{invoiceItem.inventoryItem.distributionUnit}}</td>
+            <td>{{invoiceItem.costPerUnit}}</td>
+            <td>{{invoiceItem.discount}}</td>
+            <td>{{invoiceItem.vendorItemNo}}</td>
+            <td>{{invoiceItem.lotNumber}}</td>
+            <td>{{date-format invoiceItem.expirationDate}}</td>
+            <td>
               <button class="btn btn-default warning" {{action "showRemoveItem" invoiceItem bubbles=false }}>
                 <span class="octicon octicon-x"></span>{{t 'inventory.labels.remove'}}
               </button>
