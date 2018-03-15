@@ -4,7 +4,6 @@ import Ember from 'ember';
 import LocationName from 'hospitalrun/mixins/location-name';
 import NumberFormat from 'hospitalrun/mixins/number-format';
 import Discount from 'hospitalrun/mixins/discount';
-import PaymentMethod from 'hospitalrun/mixins/payment-method';
 
 const { computed } = Ember;
 
@@ -18,7 +17,7 @@ function defaultQuantityGroups() {
  * items to be shown as inventory items since the pouchdb adapter does a
  * retrieve for keys starting with 'inventory' to fetch inventory items.
  */
-let InventoryPurchaseItem = AbstractModel.extend(LocationName, NumberFormat, Discount, PaymentMethod, {
+let InventoryPurchaseItem = AbstractModel.extend(LocationName, NumberFormat, Discount, {
   costPerUnit: DS.attr('number'),
   discount: DS.attr('number'),
   lotNumber: DS.attr('string'),
@@ -43,6 +42,11 @@ let InventoryPurchaseItem = AbstractModel.extend(LocationName, NumberFormat, Dis
     return this._numberFormat(this._purchaseCost(this, 'originalQuantity'), true);
   }),
 
+  needsPaymentInfo: computed('paymentMethod', function() {
+    let paymentMethod = this.get('paymentMethod');
+    return !Ember.isEmpty(paymentMethod) && paymentMethod !== 'P.O.S';
+  }),
+
   validations: {
     costPerUnit: {
       numericality: true
@@ -57,13 +61,6 @@ let InventoryPurchaseItem = AbstractModel.extend(LocationName, NumberFormat, Dis
     },
     paymentMethod: {
       presence: true
-    },
-    paymentInfo: {
-      presence: {
-        unless(object) {
-          return !Ember.get(object, 'needsPaymentInfo');
-        }
-      }
     }
   }
 });

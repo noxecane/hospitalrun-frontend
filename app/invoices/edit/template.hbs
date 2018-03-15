@@ -249,7 +249,7 @@
           <th>{{t 'labels.amount'}}</th>
           <th>{{t 'labels.type'}}</th>
           <th>{{t 'billing.labels.paymentMethod'}}</th>
-          <th>{{t 'labels.notes'}}</th>
+          <th>{{t 'billing.labels.paymentInfo'}}</th>
           <th>{{t 'labels.action'}}</th>
         </tr>
         {{#each model.payments as |payment|}}
@@ -257,8 +257,8 @@
             <td>{{date-format payment.datePaid}}</td>
             <td>{{payment.amount}}</td>
             <td>{{payment.paymentType}}</td>
-            <td>{{payment.method}}</td>
-            <td>{{payment.notes}}</td>
+            <td>{{payment.paymentMethod}}</td>
+            <td>{{payment.paymentInfo}}</td>
             {{#if canAddPayment}}
               <td>
                 <button class="btn btn-default neutral" {{action 'showEditPayment' payment  bubbles=false }}>{{t 'labels.edit'}}</button>

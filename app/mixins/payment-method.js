@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import DS from 'ember-data';
 import SelectValues from 'hospitalrun/utils/select-values';
 
 export default Ember.Mixin.create({
@@ -7,10 +8,5 @@ export default Ember.Mixin.create({
     'P.O.S',
     'Cheque',
     'Transfer'
-  ]),
-
-  needsPaymentInfo: Ember.computed('paymentMethod', function() {
-    return !Ember.isEmpty(this.get('paymentMethod'))
-           && this.get('paymentMethod') !== 'P.O.S';
-  })
+  ])
 });

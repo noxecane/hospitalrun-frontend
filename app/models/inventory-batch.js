@@ -3,12 +3,12 @@ import Ember from 'ember';
 import DS from 'ember-data';
 import Discount from 'hospitalrun/mixins/discount';
 import NumberFormat from 'hospitalrun/mixins/number-format';
-import PaymentMethod from 'hospitalrun/mixins/payment-method';
 
 /**
  * Model to represent a request for inventory items.
  */
-export default AbstractModel.extend(Discount, PaymentMethod, NumberFormat, {
+export default AbstractModel.extend(Discount, NumberFormat, {
+
   paymentMethod: DS.attr('string', { defaultValue: 'Cash' }),
 
   haveInvoiceItems() {
@@ -18,6 +18,11 @@ export default AbstractModel.extend(Discount, PaymentMethod, NumberFormat, {
 
   purchaseCost: Ember.computed('costPerUnit', 'quantity', function() {
     return this._numberFormat(this._purchaseCost(this), true);
+  }),
+
+  needsPaymentInfo: Ember.computed('paymentMethod', function() {
+    let paymentMethod = this.get('paymentMethod');
+    return !Ember.isEmpty(paymentMethod) && paymentMethod !== 'P.O.S';
   }),
 
   validations: {
@@ -58,13 +63,6 @@ export default AbstractModel.extend(Discount, PaymentMethod, NumberFormat, {
     },
     paymentMethod: {
       presence: true
-    },
-    paymentInfo: {
-      presence: {
-        unless(object) {
-          return !Ember.get(object, 'needsPaymentInfo');
-        }
-      }
     }
   }
 });

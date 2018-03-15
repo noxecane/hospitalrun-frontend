@@ -13,7 +13,8 @@ export default AbstractModel.extend({
   expenseAccount: DS.attr('string'),
   notes: DS.attr('string'),
   paymentType: DS.attr('string'),
-  method: DS.attr('string'),
+  paymentMethod: DS.attr('string', { defaultValue: 'Cash' }),
+  paymentInfo: DS.attr('string'),
 
   // Associations
   invoice: DS.belongsTo('invoice', { async: false }),
@@ -22,11 +23,19 @@ export default AbstractModel.extend({
     return get(this, 'paymentType') === 'Deposit';
   }),
 
+  needsPaymentInfo: computed('paymentMethod', function() {
+    let paymentMethod = this.get('paymentMethod');
+    return !Ember.isEmpty(paymentMethod) && paymentMethod !== 'P.O.S';
+  }),
+
   validations: {
     amount: {
       numericality: true
     },
     datePaid: {
+      presence: true
+    },
+    paymentMethod: {
       presence: true
     }
   }
