@@ -24,7 +24,7 @@ export default AbstractModel.extend(NumberFormat, {
       let nationalInsurance = this._getValidNumber(this.get('nationalInsurance'));
       let privateInsurance = this._getValidNumber(this.get('privateInsurance'));
       let amountOwed = this._getValidNumber(this.get('total'));
-      amountOwed = amountOwed - discount - nationalInsurance - privateInsurance;
+      amountOwed = amountOwed - (amountOwed * discount / 100) - nationalInsurance - privateInsurance;
       if (amountOwed < 0) {
         amountOwed = 0;
       }
