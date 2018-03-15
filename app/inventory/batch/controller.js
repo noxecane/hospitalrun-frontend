@@ -2,9 +2,10 @@ import AbstractEditController from 'hospitalrun/controllers/abstract-edit-contro
 import InventoryId from 'hospitalrun/mixins/inventory-id';
 import InventoryLocations from 'hospitalrun/mixins/inventory-locations';
 import Discount from 'hospitalrun/mixins/discount';
+import PaymentMethod from 'hospitalrun/mixins/payment-method';
 import Ember from 'ember';
 import { translationMacro as t } from 'ember-i18n';
-export default AbstractEditController.extend(InventoryId, InventoryLocations, Discount, {
+export default AbstractEditController.extend(InventoryId, InventoryLocations, Discount, PaymentMethod, {
   doingUpdate: false,
   inventoryController: Ember.inject.controller('inventory'),
   inventoryItems: null,
@@ -161,6 +162,8 @@ export default AbstractEditController.extend(InventoryId, InventoryLocations, Di
     let model = this.get('model');
     let purchaseDefaults = model.getProperties([
       'dateReceived',
+      'paymentMethod',
+      'paymentInfo',
       'vendor',
       'invoiceNo',
       'location',
