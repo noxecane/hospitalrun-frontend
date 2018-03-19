@@ -1,7 +1,8 @@
 import AbstractIndexRoute from 'hospitalrun/routes/abstract-index-route';
 export default AbstractIndexRoute.extend({
   modelName: 'invoice',
-  pageTitle: 'Ongoing Invoice Listing',
+  moduleName: 'invoices',
+  pageTitle: 'Ongoing Invoices',
 
   _getStartKeyFromItem(item) {
     let billDateAsTime = item.get('billDateAsTime');
@@ -21,6 +22,12 @@ export default AbstractIndexRoute.extend({
       .filter((invoice) => invoice.get('canTransact'))
       .toArray()
       .forEach((invoice) => model.removeObject(invoice));
+  },
+
+  setupController(controller, model) {
+    this._super(controller, model);
+    let currentController = this.controllerFor(this.get('moduleName'));
+    currentController.set('subActions', null);
   },
 
   queryParams: {

@@ -7,7 +7,7 @@
     </div>
     <div class="row">
       {{em-select class="col-sm-5 required form-input-group" label=(t 'billing.labels.paymentMethod') property="paymentMethod"
-        selected="model.paymentMethod" content=paymentMethods prompt=""}}
+        selected=model.paymentMethod content=paymentMethods prompt=""}}
       {{#if model.needsPaymentInfo}}
         {{em-input property="paymentInfo" label=(t 'billing.labels.paymentInfo') class="col-sm-7 required form-input-group"}}
       {{/if}}
