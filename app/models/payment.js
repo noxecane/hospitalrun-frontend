@@ -12,6 +12,7 @@ export default AbstractModel.extend({
   datePaid: DS.attr('date'),
   expenseAccount: DS.attr('string'),
   notes: DS.attr('string'),
+  reasons: DS.attr(),
   paymentType: DS.attr('string'),
   paymentMethod: DS.attr('string', { defaultValue: 'Cash' }),
   paymentInfo: DS.attr('string'),
@@ -26,6 +27,14 @@ export default AbstractModel.extend({
   needsPaymentInfo: computed('paymentMethod', function() {
     let paymentMethod = this.get('paymentMethod');
     return !Ember.isEmpty(paymentMethod) && paymentMethod !== 'P.O.S';
+  }),
+
+  formattedReasons: computed('reasons', function() {
+    let reasons = this.get('reasons');
+    if (!Ember.isEmpty(reasons)) {
+      return reasons.join(', ');
+    }
+    return '';
   }),
 
   validations: {

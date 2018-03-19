@@ -323,6 +323,16 @@ export default {
       pricingProfile: 'Pricing Profile',
       setFee: 'Set Fee'
     },
+    reports: {
+      billedDate: 'Date Billed',
+      datePaid: 'Date Paid',
+      charity: 'Charity',
+      name: 'Patient Name',
+      paid: 'Amount Payed',
+      reasons: 'Payment Reasons',
+      owing: 'Actual Charges',
+      balance: 'Balance'
+    },
     messages: {
       flatFeeMsg: 'There is a flat fee for patient financial responsibility of {{currency}}{{setFee}}.',
       flatDiscountMsg: 'There is a flat discount amount applied to the patient financial responsibility of {{currency}}{{discountAmount}}.'

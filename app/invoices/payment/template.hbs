@@ -19,12 +19,20 @@
     {{number-input property="amount" label=(t 'labels.amount') class="required payment-amount form-input-group"}}
     {{date-picker property="datePaid" label=(t 'labels.datePaid') maxDate="now" class="required form-input-group"}}
     {{em-select class="required form-input-group" label=(t 'billing.labels.paymentMethod') property="paymentMethod"
-      selected="model.paymentMethod" content=paymentMethods prompt=""}}
+      selected=model.paymentMethod content=paymentMethods prompt=""}}
     {{#if model.needsPaymentInfo}}
       {{em-input property="paymentInfo" label=(t 'billing.labels.paymentInfo') class="required form-input-group"}}
     {{/if}}
     {{select-or-typeahead property="expenseAccount" label=(t 'labels.creditTo') list=expenseAccountList
       selection=model.expenseAccount class="form-input-group"}}
+    <div class="form-group">
+      <label for="reasons">{{t 'billing.reports.reasons'}}</label>
+      <select id="reasons" class="form-control" multiple onchange={{action "selectReason"}}>
+        {{#each knownReasons as |reason|}}
+          <option value="{{reason}}">{{reason}}</option>
+        {{/each}}
+      </select>
+    </div>
     {{expand-text property="notes" label=(t 'labels.notes') class="form-input-group"}}
   {{/em-form}}
 {{/modal-dialog}}

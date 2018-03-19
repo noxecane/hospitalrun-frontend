@@ -17,6 +17,25 @@ export default AbstractEditController.extend(PatientSubmodule, PaymentMethod, {
     this.displayAlert(title, message);
   },
 
+  actions: {
+    selectReason(event) {
+      let selectedReasons = Ember.$(event.target).val();
+      this.set('model.reasons', selectedReasons);
+    }
+  },
+
+  // TODO: Use lookup list. Also create a multi-select component
+  knownReasons: function() {
+    return [
+      'Consultation',
+      'Lab Test',
+      'Imaging',
+      'Procedure',
+      'Pharmacy',
+      'Room'
+    ];
+  }.property(),
+
   currentPatient: function() {
     let type = this.get('model.paymentType');
     if (type === 'Deposit') {
