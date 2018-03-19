@@ -10,6 +10,17 @@ export default {
   },
 
   /**
+  * Convert an array to map based on a property
+  */
+  toMap(array, prop) {
+    return array.reduce((mp, p) => {
+      let key = p[prop];
+      mp[key] = p;
+      return mp;
+    }, {});
+  },
+
+  /**
   * Get an element or return a defaultValue
   */
   clojureGet(data, key, defaultValue) {
@@ -57,5 +68,12 @@ export default {
       }
     });
     return [left, right];
+  },
+
+  /**
+  * Capitalize the given string
+  */
+  capitalize(str) {
+    return `${str.charAt(0).toUpperCase()}${str.slice(1)}`;
   }
 };

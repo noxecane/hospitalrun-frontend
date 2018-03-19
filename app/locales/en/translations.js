@@ -330,8 +330,10 @@ export default {
       name: 'Patient Name',
       paid: 'Amount Payed',
       reasons: 'Payment Reasons',
-      owing: 'Actual Charges',
-      balance: 'Balance'
+      owing: 'Unpaid',
+      actual: 'Actual Charges',
+      total: 'Total: ',
+      subtotal: 'Subtotal: '
     },
     messages: {
       flatFeeMsg: 'There is a flat fee for patient financial responsibility of {{currency}}{{setFee}}.',

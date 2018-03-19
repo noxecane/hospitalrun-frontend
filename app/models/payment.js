@@ -37,6 +37,13 @@ export default AbstractModel.extend({
     return '';
   }),
 
+  formattedPaymentInfo: computed('paymentInfo', 'needsPaymentInfo', function() {
+    if (this.get('needsPaymentInfo')) {
+      return this.get('paymentInfo');;
+    }
+    return 'N/A';
+  }),
+
   validations: {
     amount: {
       numericality: true

@@ -70,6 +70,7 @@ Router.map(function() {
     this.route('edit', { path: '/edit/:invoice_id' });
     this.route('search', { path: '/search/:search_text' });
     this.route('ongoing');
+    this.route('reports');
   });
 
   this.route('labs', function() {

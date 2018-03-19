@@ -383,6 +383,20 @@ let designDocs = [{
   ),
   version: 4
 }, {
+  name: 'invoice_by_bill_date',
+  function: generateView('invoice',
+    `${generateDateForView('billDate')}
+    emit([billDate, doc._id]);`
+  ),
+  version: 1
+}, {
+  name: 'payment_by_date_paid',
+  function: generateView('payment',
+    `${generateDateForView('datePaid')}
+    emit([datePaid, doc._id]);`
+  ),
+  version: 1
+}, {
   name: 'lab_by_status',
   function: generateView('lab',
     `${generateDateForView('labDate')}
