@@ -1267,7 +1267,7 @@ export default {
       dob: 'DOB',
       education: 'Education',
       email: 'Email',
-      externalPatientId: 'External Patient Id',
+      externalPatientId: 'Card No',
       firstName: 'First Name',
       income: 'Income',
       insurance: 'Insurance',

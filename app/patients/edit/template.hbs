@@ -105,6 +105,7 @@
                 {{em-input property="firstName" label=(t 'patients.labels.firstName') class="form-input-group required test-first-name"}}
                 {{em-input property="middleName" label=(t 'patients.labels.middleName') class="form-input-group test-middle-name"}}
                 {{em-input property="lastName" label=(t 'patients.labels.lastName') class="form-input-group required test-last-name"}}
+                {{em-input property="externalPatientId" label=(t 'patients.labels.externalPatientId') class="form-input-group"}}
                 {{select-or-typeahead property="sex" label=(t 'patients.labels.sex')  class="form-input-group" list=sexList selection=model.sex}}
                 {{date-picker property="dateOfBirth" label=(t 'patients.labels.dateOfBirth')  class="form-input-group " maxDate="now"}}
                 <div class="form-input-group">
@@ -137,7 +138,6 @@
                   </button>
                 </div>
                 {{select-or-typeahead property="status" label=(t 'patients.labels.status') list=statusList selection=model.status class="form-input-group" }}
-                {{em-input property="externalPatientId" label=(t 'patients.labels.externalPatientId') class="form-input-group"}}
                 {{em-select
                   prompt=" "
                   label=(t 'patients.labels.bloodType')
