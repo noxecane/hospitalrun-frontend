@@ -39,7 +39,7 @@ export default AbstractModel.extend({
 
   formattedPaymentInfo: computed('paymentInfo', 'needsPaymentInfo', function() {
     if (this.get('needsPaymentInfo')) {
-      return this.get('paymentInfo');;
+      return this.get('paymentInfo');
     }
     return 'N/A';
   }),
