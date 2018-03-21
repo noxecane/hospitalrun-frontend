@@ -328,7 +328,7 @@ export default {
       datePaid: 'Date Paid',
       charity: 'Charity',
       name: 'Patient Name',
-      paid: 'Amount Payed',
+      paid: 'Amount Paid',
       reasons: 'Payment Reasons',
       owing: 'Unpaid',
       actual: 'Actual Charges',

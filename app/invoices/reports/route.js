@@ -1,7 +1,7 @@
 import AbstractIndexRoute from 'hospitalrun/routes/abstract-index-route';
 import Ember from 'ember';
 export default AbstractIndexRoute.extend({
-  pageTitle: 'Inventory Reports',
+  pageTitle: 'Invoice Reports',
   moduleName: 'invoices',
 
   // No model for reports; data gets retrieved when report is run.
